@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
+using IvNav.Store.Common.Identity;
 
 namespace IvNav.Store.Setup.Controllers.Base;
 
@@ -14,11 +14,5 @@ public abstract class ApiControllerBaseSecure : ApiControllerBase
     /// <summary>
     /// UserId
     /// </summary>
-    protected Guid UserId => GetUserId();
-
-    private Guid GetUserId()
-    {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        return Guid.Parse(userIdString);
-    }
+    protected Guid UserId => IdentityState.Current!.UserId;
 }

@@ -42,6 +42,7 @@ app.UseAuthorization();
 app.UseMiddleware<ActivityMiddleware>("IvNav.Store.Web");
 app.UseMiddleware<UnhandledExceptionMiddleware>();
 app.UseMiddleware<OperationCanceledMiddleware>();
+app.UseMiddleware<IdentityMiddleware>();
 
 app.UseRouting();
 app.UseEndpoints(endpointRouteBuilder =>
