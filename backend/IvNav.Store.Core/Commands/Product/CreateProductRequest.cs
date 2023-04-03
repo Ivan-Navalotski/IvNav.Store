@@ -1,7 +1,7 @@
-using MediatR;
 using Ardalis.GuardClauses;
+using MediatR;
 
-namespace IvNav.Store.Core.Commands.CreateProduct;
+namespace IvNav.Store.Core.Commands.Product;
 
 public class CreateProductRequest : IRequest<CreateProductResponse>
 {

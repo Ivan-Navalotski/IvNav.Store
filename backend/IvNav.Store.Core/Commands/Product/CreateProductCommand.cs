@@ -1,10 +1,9 @@
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
-using IvNav.Store.Infrastructure.Entities;
 using MediatR;
 
-namespace IvNav.Store.Core.Commands.CreateProduct;
+namespace IvNav.Store.Core.Commands.Product;
 
-internal class CreateProductCommand : IRequestHandler<CreateProductRequest, CreateProductResponse>
+internal sealed class CreateProductCommand : IRequestHandler<CreateProductRequest, CreateProductResponse>
 {
     private readonly IApplicationDbContext _applicationDbContext;
 
@@ -15,7 +14,7 @@ internal class CreateProductCommand : IRequestHandler<CreateProductRequest, Crea
 
     public async Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
     {
-        var entity = new Product(request.Name);
+        var entity = new Infrastructure.Entities.Product(request.Name);
         _applicationDbContext.Products.Add(entity);
 
         await _applicationDbContext.SaveChangesAsync(cancellationToken);

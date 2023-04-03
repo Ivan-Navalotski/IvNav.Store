@@ -14,12 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IvNav.Store.Infrastructure.Entities\IvNav.Store.Infrastructure.Entities.csproj" />
     <ProjectReference Include="..\IvNav.Store.Infrastructure\IvNav.Store.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>

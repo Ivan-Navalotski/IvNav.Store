@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IvNav.Store.Common\IvNav.Store.Common.csproj" />
-    <ProjectReference Include="..\IvNav.Store.Infrastructure.Entities\IvNav.Store.Infrastructure.Entities.csproj" />
   </ItemGroup>
 
 </Project>

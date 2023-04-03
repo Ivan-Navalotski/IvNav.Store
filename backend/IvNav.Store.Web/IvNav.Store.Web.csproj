@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IvNav.Store.Core.Models\IvNav.Store.Core.Models.csproj" />
     <ProjectReference Include="..\IvNav.Store.Core\IvNav.Store.Core.csproj" />
     <ProjectReference Include="..\IvNav.Store.Setup\IvNav.Store.Setup.csproj" />
   </ItemGroup>

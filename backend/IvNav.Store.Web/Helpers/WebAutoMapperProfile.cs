@@ -8,7 +8,7 @@ namespace IvNav.Store.Web.Helpers
     {
         public WebAutoMapperProfile()
         {
-            CreateMap<ProductModel, GetProductResponse>();
+            CreateMap<ProductModel, ReadProductResponseDto>();
         }
     }
 }

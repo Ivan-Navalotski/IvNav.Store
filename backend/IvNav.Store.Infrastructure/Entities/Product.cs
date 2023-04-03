@@ -1,6 +1,6 @@
 namespace IvNav.Store.Infrastructure.Entities;
 
-public sealed class Product
+public class Product
 {
     public Guid Id { get; private set; }
 
