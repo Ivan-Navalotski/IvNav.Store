@@ -1,13 +1,12 @@
-namespace IvNav.Store.Web.Models.V1.Product
+namespace IvNav.Store.Web.Models.V1.Product;
+
+/// <summary>
+/// ReadProductsResponseDto.
+/// </summary>
+public class ReadProductsResponseDto
 {
     /// <summary>
-    /// ReadProductsResponseDto.
+    /// Items.
     /// </summary>
-    public class ReadProductsResponseDto
-    {
-        /// <summary>
-        /// Items.
-        /// </summary>
-        public IReadOnlyCollection<ReadProductResponseDto> Items { get; init; } = null!;
-    }
+    public IReadOnlyCollection<ReadProductResponseDto> Items { get; init; } = null!;
 }

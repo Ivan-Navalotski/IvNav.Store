@@ -2,13 +2,12 @@ using AutoMapper;
 using IvNav.Store.Core.Models.Product;
 using IvNav.Store.Web.Models.V1.Product;
 
-namespace IvNav.Store.Web.Helpers
+namespace IvNav.Store.Web.Helpers;
+
+internal class WebAutoMapperProfile : Profile
 {
-    internal class WebAutoMapperProfile : Profile
+    public WebAutoMapperProfile()
     {
-        public WebAutoMapperProfile()
-        {
-            CreateMap<ProductModel, ReadProductResponseDto>();
-        }
+        CreateMap<ProductModel, ReadProductResponseDto>();
     }
 }

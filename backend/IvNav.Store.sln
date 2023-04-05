@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Enums", "IvNav.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Core.Tests", "IvNav.Store.Core.Tests\IvNav.Store.Core.Tests.csproj", "{9E60D796-B989-484C-8045-013C3462786D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Web.Tests", "IvNav.Store.Web.Tests\IvNav.Store.Web.Tests.csproj", "{60F8327E-D414-4F25-AB84-74FF72B120AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,12 +55,17 @@ Global
 		{9E60D796-B989-484C-8045-013C3462786D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E60D796-B989-484C-8045-013C3462786D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E60D796-B989-484C-8045-013C3462786D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9E60D796-B989-484C-8045-013C3462786D} = {0DD6FA32-86B8-4F61-9E1D-8BA15661CE37}
+		{60F8327E-D414-4F25-AB84-74FF72B120AF} = {0DD6FA32-86B8-4F61-9E1D-8BA15661CE37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB899EC5-04C9-4212-9E75-76E15CF09ED2}
