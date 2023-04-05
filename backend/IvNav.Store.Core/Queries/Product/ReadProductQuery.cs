@@ -1,3 +1,4 @@
+using IvNav.Store.Core.Extensions.Entities;
 using IvNav.Store.Core.Models.Product;
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
 using MediatR;
@@ -21,6 +22,6 @@ internal sealed class ReadProductQuery : IRequestHandler<ReadProductRequest, Rea
             .FirstOrDefaultAsync(cancellationToken);
 
 
-        return new ReadProductResponse(entity != null ? ProductModel.MapFromEntity(entity) : null);
+        return new ReadProductResponse(entity?.MapToModel());
     }
 }

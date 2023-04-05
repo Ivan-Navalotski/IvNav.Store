@@ -2,7 +2,6 @@ using AutoMapper;
 using IvNav.Store.Core.Commands.Product;
 using IvNav.Store.Core.Queries.Product;
 using IvNav.Store.Setup.Controllers.Base;
-using IvNav.Store.Setup.Models;
 using IvNav.Store.Web.Models.V1.Product;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -31,12 +30,14 @@ public class ProductsController : ApiControllerBase
     /// <returns></returns>
     [HttpPost]
     [SwaggerResponse(StatusCodes.Status201Created)]
-    public async Task<IActionResult> Create(CreateProductRequestDto requestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateProductRequestDto requestDto, CancellationToken cancellationToken)
     {
         var request = new CreateProductRequest(requestDto.Name!);
         var response = await _mediator.Send(request, cancellationToken);
 
-        return CreatedAtRoute(nameof(GetProduct), new { id = response.ProductId! }, new IdDto<Guid> { Id = response.ProductId!.Value });
+        var responseDto = _mapper.Map<ReadProductResponseDto?>(response.Product!);
+
+        return CreatedAtRoute(nameof(GetProduct), new { id = response.Product!.Id }, responseDto);
     }
 
     /// <summary>
@@ -52,18 +53,18 @@ public class ProductsController : ApiControllerBase
         var request = new ReadProductRequest(id);
         var response = await _mediator.Send(request, cancellationToken);
 
-        var responseDto = _mapper.Map<ReadProductResponseDto?>(response);
+        var responseDto = _mapper.Map<ReadProductResponseDto?>(response.Item!);
 
         return responseDto != null ? Ok(responseDto) : NotFound();
     }
 
     /// <summary>
-    /// Get product
+    /// Get products
     /// </summary>
     /// <returns></returns>
     [HttpGet]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductsResponseDto))]
-    public async Task<IActionResult> GetProducts(ReadProductsRequestDto requestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProducts([FromQuery] ReadProductsRequestDto requestDto, CancellationToken cancellationToken)
     {
         var request = new ReadProductsRequest(requestDto.Page, requestDto.PageSize);
         var response = await _mediator.Send(request, cancellationToken);

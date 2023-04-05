@@ -105,7 +105,7 @@ public static class SwaggerConfiguration
                 var method = apiDesc.HttpMethod?.ToUpper() ?? "UNKNOWN";
                 var sortingNumber = sorting.ContainsKey(method) ? sorting[method] : sorting["UNKNOWN"];
 
-                var path = apiDesc.RelativePath?.Replace('/', '_');
+                var path = apiDesc.RelativePath?.Replace('/', '.');
 
                 return $"{path}_{sortingNumber}_{method}";
             });

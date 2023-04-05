@@ -12,7 +12,7 @@ public class ReadProductsRequestDto
     /// </summary>
     /// <example>1</example>
     [Range(1, int.MaxValue)]
-    public int? Page { get; set; }
+    public int? Page { get; set; } = 1;
 
     /// <summary>
     /// PageSize.

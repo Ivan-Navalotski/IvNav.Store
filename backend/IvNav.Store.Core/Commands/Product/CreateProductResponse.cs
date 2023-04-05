@@ -1,11 +1,13 @@
+using IvNav.Store.Core.Models.Product;
+
 namespace IvNav.Store.Core.Commands.Product;
 
 public class CreateProductResponse
 {
-    public Guid? ProductId { get; private set; }
+    public ProductModel? Product { get; private set; }
 
-    public CreateProductResponse(Guid? productId)
+    public CreateProductResponse(ProductModel? product)
     {
-        ProductId = productId;
+        Product = product;
     }
 }

@@ -1,4 +1,5 @@
 using IvNav.Store.Core.Extensions.Common;
+using IvNav.Store.Core.Extensions.Entities;
 using IvNav.Store.Core.Models.Product;
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
 using MediatR;
@@ -26,7 +27,7 @@ internal sealed class ReadProductsQuery : IRequestHandler<ReadProductsRequest, R
 
         var items = await _applicationDbContext.Products
             .ApplyPaging(request)
-            .Select(i => ProductModel.MapFromEntity(i))
+            .Select(i => i.MapToModel())
             .ToListAsync(cancellationToken);
 
         return new ReadProductsResponse(items, totalCount);
