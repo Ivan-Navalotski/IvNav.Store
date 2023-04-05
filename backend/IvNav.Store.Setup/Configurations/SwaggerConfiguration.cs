@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -42,22 +40,6 @@ public static class SwaggerConfiguration
     }
 
     /// <summary>
-    /// Use redirect to swagger
-    /// </summary>
-    /// <param name="endpointRouteBuilder"></param>
-    /// <returns></returns>
-    public static IEndpointRouteBuilder UseRedirectToSwagger(this IEndpointRouteBuilder endpointRouteBuilder)
-    {
-        endpointRouteBuilder.MapGet("", async context =>
-        {
-            context.Response.Redirect("/swagger/index.html", false);
-            await context.Response.WriteAsync("");
-        });
-
-        return endpointRouteBuilder;
-    }
-
-    /// <summary>
     /// RegisterSwagger
     /// </summary>
     /// <param name="services"></param>
@@ -76,6 +58,7 @@ public static class SwaggerConfiguration
         var registerOptionsData = new RegisterSwaggerOptions();
         registerOptions?.Invoke(registerOptionsData);
 
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
             c.EnableAnnotations();
@@ -187,7 +170,6 @@ public static class SwaggerConfiguration
 
         return app;
     }
-
 
     /// <summary>
     /// CreateInfoForApiVersion

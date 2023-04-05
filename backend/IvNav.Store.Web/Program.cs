@@ -45,11 +45,13 @@ app.UseMiddleware<OperationCanceledMiddleware>();
 app.UseMiddleware<IdentityMiddleware>();
 
 app.UseRouting();
-app.UseEndpoints(endpointRouteBuilder =>
+
+app.MapGet("/", context =>
 {
-    endpointRouteBuilder.UseRedirectToSwagger();
-    endpointRouteBuilder.MapDefaultControllerRoute();
+    context.Response.Redirect("/swagger/index.html", false);
+    return Task.CompletedTask;
 });
+app.MapDefaultControllerRoute();
 
 app.UseStaticFiles();
 app.UseRegisteredSwagger(app.Configuration);
