@@ -9,10 +9,10 @@ namespace IvNav.Store.Setup.Configurations;
 public static class AppSettingsConfiguration
 {
     /// <summary>
-    /// UseAppSettings
+    /// AddAppSettings
     /// </summary>
     /// <param name="builder"></param>
-    public static void UseAppSettings(this WebApplicationBuilder builder)
+    public static void AddAppSettings(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddJsonFile("appsettings-api-info.json", true);
         builder.Configuration.AddJsonFile("appsettings-logger.json", true);

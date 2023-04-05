@@ -10,15 +10,14 @@ namespace IvNav.Store.Setup.Configurations;
 public static class LoggerConfiguration
 {
     /// <summary>
-    /// UseLogger
+    /// AddLogger
     /// </summary>
     /// <param name="builder"></param>
-    public static void UseLogger(this WebApplicationBuilder builder)
+    public static void AddLogger(this WebApplicationBuilder builder)
     {
         var section = builder.Configuration.GetSection("NLog");
 
-        bool.TryParse(section.GetSection("clearProviders").Value, out var clearProviders);
-        if (clearProviders)
+        if (bool.TryParse(section.GetSection("Logging:clearProviders").Value, out var clearProviders) && clearProviders)
         {
             builder.Logging.ClearProviders();
         }

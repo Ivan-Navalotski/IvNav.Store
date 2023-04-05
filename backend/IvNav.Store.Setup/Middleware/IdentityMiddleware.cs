@@ -28,10 +28,13 @@ public class IdentityMiddleware
     /// <param name="context"></param>
     public async Task Invoke(HttpContext context)
     {
-        var userIdString = context.User.FindFirstValue(IdentityConstants.UserIdClaimType)!;
-        var tenantIdString = context.User.FindFirstValue(IdentityConstants.TenantIdClaimType)!;
+        if (context.User.Identity?.IsAuthenticated ?? false)
+        {
+            var userIdString = context.User.FindFirstValue(IdentityConstants.UserIdClaimType)!;
+            var tenantIdString = context.User.FindFirstValue(IdentityConstants.TenantIdClaimType)!;
 
-        IdentityState.SetCurrent(Guid.Parse(tenantIdString), Guid.Parse(userIdString));
+            IdentityState.SetCurrent(Guid.Parse(tenantIdString), Guid.Parse(userIdString));
+        }
 
         await _next(context);
     }

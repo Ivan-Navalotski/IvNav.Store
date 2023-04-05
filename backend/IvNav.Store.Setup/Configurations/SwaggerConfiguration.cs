@@ -40,13 +40,13 @@ public static class SwaggerConfiguration
     }
 
     /// <summary>
-    /// RegisterSwagger
+    /// AddSwagger
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <param name="registerOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection RegisterSwagger(this IServiceCollection services, IConfiguration configuration,
+    public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration,
         Action<RegisterSwaggerOptions>? registerOptions = null)
     {
         var apiDescription = configuration.GetSection("ApiInfoSettings");
@@ -137,12 +137,13 @@ public static class SwaggerConfiguration
     }
 
     /// <summary>
-    /// UseRegisteredSwagger
+    /// UseSwaggerWithUI
     /// </summary>
     /// <param name="app"></param>
     /// <param name="configuration">Configuration</param>
     /// <returns></returns>
-    public static IApplicationBuilder UseRegisteredSwagger(this IApplicationBuilder app, IConfiguration? configuration)
+    // ReSharper disable once InconsistentNaming
+    public static IApplicationBuilder UseSwaggerWithUI(this IApplicationBuilder app, IConfiguration? configuration)
     {
         var apiVersionService = (IApiVersionDescriptionProvider?)app.ApplicationServices.GetService(typeof(IApiVersionDescriptionProvider));
         var apiDescription = configuration?.GetSection("ApiInfoSettings");

@@ -6,23 +6,26 @@ using IvNav.Store.Web.Helpers;
 // Builder
 var builder = WebApplication.CreateBuilder(args);
 
-builder.UseAppSettings();
-builder.UseLogger();
+builder.AddAppSettings();
+builder.AddLogger();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("allow-all", configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+    options.AddPolicy("allow-all",
+        configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
-
-builder.Services.RegisterCore(builder.Configuration);
-builder.Services.RegisterJsonOptions();
-
-builder.Services.RegisterAutoMapperProfiles(o =>
+builder.Services.AddAutoMapperProfiles(o =>
 {
     o.AddProfile<WebAutoMapperProfile>();
 });
 
-builder.Services.RegisterSwagger(builder.Configuration, c =>
+builder.Services.AddCoreDependencies(builder.Configuration);
+builder.Services.AddJwtAuthentication();
+builder.Services.AddDefaultApiVersioning();
+builder.Services.AddControllers();
+builder.Services.AddJsonOptions();
+
+builder.Services.AddSwagger(builder.Configuration, c =>
 {
     c.SecurityScheme = SwaggerConfiguration.GetBearerSecurityScheme();
     c.AssembliesForAnnotations = new[] { "IvNav.Store.Web", "IvNav.Store.Enums" };
@@ -45,6 +48,7 @@ app.UseMiddleware<OperationCanceledMiddleware>();
 app.UseMiddleware<IdentityMiddleware>();
 
 app.UseRouting();
+//app.UseMvc();
 
 app.MapGet("/", context =>
 {
@@ -54,7 +58,7 @@ app.MapGet("/", context =>
 app.MapDefaultControllerRoute();
 
 app.UseStaticFiles();
-app.UseRegisteredSwagger(app.Configuration);
+app.UseSwaggerWithUI(app.Configuration);
 
 // Run
 app.Run();

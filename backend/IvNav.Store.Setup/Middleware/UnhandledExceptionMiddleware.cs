@@ -37,10 +37,7 @@ public class UnhandledExceptionMiddleware
         }
         catch (Exception e)
         {
-            var exceptionHandlerPathFeature =
-                context.Features.Get<IExceptionHandlerPathFeature>();
-
-            exceptionHandlerPathFeature?.Error
+            e
                 .FlattenHierarchy()
                 .ToList()
                 .ForEach(x => logger.LogError("{message}", x));

@@ -6,9 +6,9 @@ namespace IvNav.Store.Core.Configurations;
 
 public static class RegisterCoreConfiguration
 {
-    public static IServiceCollection RegisterCore(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCoreDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.RegisterDb(configuration);
+        services.AddDbDependencies(configuration);
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<MediatRAssembly>());
 

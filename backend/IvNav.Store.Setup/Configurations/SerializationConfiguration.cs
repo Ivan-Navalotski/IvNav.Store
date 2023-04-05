@@ -10,11 +10,11 @@ namespace IvNav.Store.Setup.Configurations;
 public static class SerializationConfiguration
 {
     /// <summary>
-    /// RegisterJsonOptions
+    /// AddJsonOptions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection RegisterJsonOptions(this IServiceCollection services)
+    public static IServiceCollection AddJsonOptions(this IServiceCollection services)
     {
         services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
         {

@@ -9,12 +9,12 @@ namespace IvNav.Store.Setup.Configurations;
 public static class AutoMapperConfiguration
 {
     /// <summary>
-    /// RegisterAutoMapperProfiles
+    /// AddAutoMapperProfiles
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configure"></param>
     /// <returns></returns>
-    public static IServiceCollection RegisterAutoMapperProfiles(this IServiceCollection services,
+    public static IServiceCollection AddAutoMapperProfiles(this IServiceCollection services,
         Action<IMapperConfigurationExpression> configure)
     {
         var config = new MapperConfiguration(configure.Invoke);

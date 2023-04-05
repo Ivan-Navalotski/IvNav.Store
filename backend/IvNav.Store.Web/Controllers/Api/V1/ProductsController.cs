@@ -13,7 +13,7 @@ namespace IvNav.Store.Web.Controllers.Api.V1;
 /// <summary>
 /// Products
 /// </summary>
-public class ProductsController : ApiControllerBaseSecure
+public class ProductsController : ApiControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
@@ -29,6 +29,7 @@ public class ProductsController : ApiControllerBaseSecure
     /// Create product
     /// </summary>
     /// <returns></returns>
+    [HttpPost]
     [SwaggerResponse(StatusCodes.Status201Created)]
     public async Task<IActionResult> Create(CreateProductRequestDto requestDto, CancellationToken cancellationToken)
     {
@@ -45,9 +46,15 @@ public class ProductsController : ApiControllerBaseSecure
     [HttpGet]
     [Route("{id}", Name = nameof(GetProduct))]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductResponseDto))]
-    public IActionResult GetProduct(Guid id, CancellationToken cancellationToken)
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
     {
-        return Ok(id);
+        var request = new ReadProductRequest(id);
+        var response = await _mediator.Send(request, cancellationToken);
+
+        var responseDto = _mapper.Map<ReadProductResponseDto?>(response);
+
+        return responseDto != null ? Ok(responseDto) : NotFound();
     }
 
     /// <summary>

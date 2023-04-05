@@ -10,17 +10,17 @@ using IdentityDbContext = IvNav.Store.Infrastructure.Contexts.IdentityDbContext;
 
 namespace IvNav.Store.Infrastructure.Configurations;
 
-public static class RegisterDbConfiguration
+public static class DbConfiguration
 {
-    public static IServiceCollection RegisterDb(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDbDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DbConnection"))
-        );
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection")),
+            ServiceLifetime.Transient);
 
         services.AddDbContext<IIdentityContext, IdentityDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DbConnection"))
-        );
+            options.UseSqlServer(configuration.GetConnectionString("DbConnection")),
+            ServiceLifetime.Transient);
 
 
         services
