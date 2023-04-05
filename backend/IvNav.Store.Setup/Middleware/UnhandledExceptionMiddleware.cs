@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using IvNav.Store.Common.Extensions;
 using IvNav.Store.Setup.Models;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

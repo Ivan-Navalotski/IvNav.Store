@@ -1,5 +1,4 @@
 using Ardalis.GuardClauses;
-using IvNav.Store.Core.Models.Abstractions.Paging;
 using MediatR;
 
 namespace IvNav.Store.Core.Queries.Product;

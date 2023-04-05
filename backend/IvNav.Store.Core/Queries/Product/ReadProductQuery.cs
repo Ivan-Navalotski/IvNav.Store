@@ -1,5 +1,4 @@
 using IvNav.Store.Core.Extensions.Entities;
-using IvNav.Store.Core.Models.Product;
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

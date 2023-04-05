@@ -1,12 +1,5 @@
 using IvNav.Store.Core.Tests.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IvNav.Store.Core.Queries.Product;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection.PortableExecutable;
 using IvNav.Store.Core.Tests.Helpers.EntityBuilders;
 using NUnit.Framework;
 
