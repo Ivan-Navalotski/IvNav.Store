@@ -25,7 +25,7 @@ public class ProductsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Create product
+    /// Create product.
     /// </summary>
     /// <returns></returns>
     [HttpPost]
@@ -37,18 +37,18 @@ public class ProductsController : ApiControllerBase
 
         var responseDto = _mapper.Map<ReadProductResponseDto?>(response.Product!);
 
-        return CreatedAtRoute(nameof(GetProduct), new { id = response.Product!.Id }, responseDto);
+        return CreatedAtRoute(nameof(ReadProduct), new { id = response.Product!.Id }, responseDto);
     }
 
     /// <summary>
-    /// Get product
+    /// Read product.
     /// </summary>
     /// <returns></returns>
     [HttpGet]
-    [Route("{id}", Name = nameof(GetProduct))]
+    [Route("{id}", Name = nameof(ReadProduct))]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductResponseDto))]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> ReadProduct(Guid id, CancellationToken cancellationToken)
     {
         var request = new ReadProductRequest(id);
         var response = await _mediator.Send(request, cancellationToken);
@@ -59,12 +59,12 @@ public class ProductsController : ApiControllerBase
     }
 
     /// <summary>
-    /// Get products
+    /// Read products.
     /// </summary>
     /// <returns></returns>
     [HttpGet]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductsResponseDto))]
-    public async Task<IActionResult> GetProducts([FromQuery] ReadProductsRequestDto requestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> ReadProducts([FromQuery] ReadProductsRequestDto requestDto, CancellationToken cancellationToken)
     {
         var request = new ReadProductsRequest(requestDto.Page, requestDto.PageSize);
         var response = await _mediator.Send(request, cancellationToken);

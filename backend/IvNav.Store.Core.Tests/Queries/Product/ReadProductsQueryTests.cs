@@ -6,7 +6,7 @@ using IvNav.Store.Core.Tests.Helpers.EntityBuilders;
 namespace IvNav.Store.Core.Tests.Queries.Product;
 
 [TestFixture]
-internal class ReadProductsQueryTests : DatabaseFixture
+internal class ReadProductsQueryTests : TestFixture
 {
     private readonly ReadProductsQuery _query;
 
@@ -36,8 +36,8 @@ internal class ReadProductsQueryTests : DatabaseFixture
 
         for (var i = 0; i < products.Count; i++)
         {
-            Assert.AreEqual(products[i].Id, response.Items.ElementAt(i).Id);
-            Assert.AreEqual(products[i].Name, response.Items.ElementAt(i).Name);
+            Assert.That(products[i].Id, Is.EqualTo(response.Items.ElementAt(i).Id));
+            Assert.That(products[i].Name, Is.EqualTo(response.Items.ElementAt(i).Name));
         }
     }
 
@@ -53,7 +53,7 @@ internal class ReadProductsQueryTests : DatabaseFixture
         // assert
         Assert.IsNotNull(response);
         Assert.IsNotNull(response.Items);
-        Assert.AreEqual(0, response.Items.Count);
+        Assert.That(0, Is.EqualTo(response.Items.Count));
     }
 }
 

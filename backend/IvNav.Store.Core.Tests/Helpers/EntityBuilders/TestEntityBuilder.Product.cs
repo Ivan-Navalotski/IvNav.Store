@@ -4,7 +4,7 @@ namespace IvNav.Store.Core.Tests.Helpers.EntityBuilders;
 
 internal static partial class TestEntityBuilder
 {
-    internal static async Task<Product> CreateProduct(this DatabaseFixture test)
+    internal static async Task<Product> CreateProduct(this TestFixture test)
     {
         var entity = new Product("Test");
 

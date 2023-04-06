@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace IvNav.Store.Core.Tests.Queries.Product;
 
 [TestFixture]
-internal class ReadProductQueryTests : DatabaseFixture
+internal class ReadProductQueryTests : TestFixture
 {
     private readonly ReadProductQuery _query;
 
@@ -29,8 +29,8 @@ internal class ReadProductQueryTests : DatabaseFixture
         Assert.IsNotNull(response);
         Assert.IsNotNull(response.Item);
 
-        Assert.AreEqual(product.Id, response.Item!.Id);
-        Assert.AreEqual(product.Name, response.Item.Name);
+        Assert.That(product.Id, Is.EqualTo(response.Item!.Id));
+        Assert.That(product.Name, Is.EqualTo(response.Item.Name));
     }
 
     [Test]

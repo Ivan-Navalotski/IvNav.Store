@@ -1,17 +1,17 @@
 namespace IvNav.Store.Web.Models.V1.Product;
 
 /// <summary>
-/// ProductDto
+/// Product.
 /// </summary>
-public class ReadProductResponseDto
+public sealed class ReadProductResponseDto
 {
     /// <summary>
-    /// Id.
+    /// Product identifier.
     /// </summary>
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Name.
+    /// Product name.
     /// </summary>
     public string Name { get; set; } = null!;
 }

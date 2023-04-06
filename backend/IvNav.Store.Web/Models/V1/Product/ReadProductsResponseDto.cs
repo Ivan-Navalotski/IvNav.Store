@@ -1,12 +1,11 @@
+using IvNav.Store.Setup.Models;
+
 namespace IvNav.Store.Web.Models.V1.Product;
 
 /// <summary>
-/// ReadProductsResponseDto.
+/// Products.
 /// </summary>
-public class ReadProductsResponseDto
+public sealed class ReadProductsResponseDto : ItemsResponseDto<ReadProductResponseDto>
 {
-    /// <summary>
-    /// Items.
-    /// </summary>
-    public IReadOnlyCollection<ReadProductResponseDto> Items { get; init; } = null!;
+
 }

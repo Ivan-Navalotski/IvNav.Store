@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 namespace IvNav.Store.Web.Models.V1.Product;
 
 /// <summary>
-/// CreateProductDto
+/// Create product.
 /// </summary>
-public class CreateProductRequestDto
+public sealed class CreateProductRequestDto
 {
     /// <summary>
-    /// Name
+    /// Product name.
     /// </summary>
     /// <example>Product1</example>
     [Required]

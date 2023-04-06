@@ -1,11 +1,14 @@
 using IvNav.Store.Common.Identity;
 using IvNav.Store.Infrastructure.Contexts;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
+using NUnit.Framework;
 
 namespace IvNav.Store.Core.Tests.Helpers;
 
-internal class DatabaseFixture : IDisposable
+internal class TestFixture : IDisposable
 {
     private bool _disposed;
 
@@ -13,8 +16,9 @@ internal class DatabaseFixture : IDisposable
     private readonly Guid _userId = Guid.Parse("144ff3a4-2549-4708-9f74-e8273f85d138");
 
     internal ApplicationDbContext ApplicationDbContext { get; }
+    internal readonly Mock<IMediator> MediatorMock;
 
-    public DatabaseFixture()
+    public TestFixture()
     {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -26,6 +30,14 @@ internal class DatabaseFixture : IDisposable
 
         ApplicationDbContext = new ApplicationDbContext(options);
         ApplicationDbContext.Database.EnsureCreated();
+
+        MediatorMock = new(MockBehavior.Strict);
+    }
+
+    [SetUp]
+    public virtual void BeforeEachTest()
+    {
+        MediatorMock.Invocations.Clear();
     }
 
     public void Dispose()
