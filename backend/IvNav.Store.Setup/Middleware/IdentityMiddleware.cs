@@ -33,7 +33,7 @@ public class IdentityMiddleware
             var userIdString = context.User.FindFirstValue(IdentityConstants.UserIdClaimType)!;
             var tenantIdString = context.User.FindFirstValue(IdentityConstants.TenantIdClaimType)!;
 
-            IdentityState.SetCurrent(Guid.Parse(tenantIdString), Guid.Parse(userIdString));
+            IdentityState.SetCurrent(Guid.Parse(userIdString), Guid.Parse(tenantIdString));
         }
 
         await _next(context);

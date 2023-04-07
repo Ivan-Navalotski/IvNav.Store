@@ -10,17 +10,18 @@ public class IdentityState
     /// </summary>
     public static IdentityState? Current => CurrentLocal.Value;
 
-    public static void SetCurrent(Guid tenantId, Guid userId)
+    public static void SetCurrent(Guid userId, Guid tenantId)
     {
-        CurrentLocal.Value = new IdentityState(tenantId, userId);
+        CurrentLocal.Value = new IdentityState(userId, tenantId);
     }
-
-    public Guid TenantId { get; }
 
     public Guid UserId { get; set; }
 
-    private IdentityState(Guid tenantId, Guid userId)
+    public Guid TenantId { get; }
+
+    private IdentityState(Guid userId, Guid tenantId)
     {
+        UserId = userId;
         TenantId = tenantId;
     }
 }
