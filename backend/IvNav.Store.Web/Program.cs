@@ -1,4 +1,5 @@
 using IvNav.Store.Core.Configurations;
+using IvNav.Store.Core.Helpers;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Middleware;
 using IvNav.Store.Web.Helpers;
@@ -20,7 +21,7 @@ builder.Services.AddAutoMapperProfiles(o =>
 });
 
 builder.Services.AddCoreDependencies(builder.Configuration);
-builder.Services.AddJwtAuthentication();
+builder.Services.AddJwtAuthentication(new JwtHelper(builder.Configuration).GetValidationParameters());
 builder.Services.AddDefaultApiVersioning();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();
@@ -39,6 +40,8 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseApiVersioning();
 
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -47,8 +50,6 @@ app.UseMiddleware<UnhandledExceptionMiddleware>();
 app.UseMiddleware<OperationCanceledMiddleware>();
 app.UseMiddleware<IdentityMiddleware>();
 
-app.UseRouting();
-//app.UseMvc();
 
 app.MapGet("/", context =>
 {

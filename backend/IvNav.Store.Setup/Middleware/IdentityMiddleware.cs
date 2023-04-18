@@ -30,8 +30,8 @@ public class IdentityMiddleware
     {
         if (context.User.Identity?.IsAuthenticated ?? false)
         {
-            var userIdString = context.User.FindFirstValue(IdentityConstants.UserIdClaimType)!;
-            var tenantIdString = context.User.FindFirstValue(IdentityConstants.TenantIdClaimType)!;
+            var userIdString = context.User.FindFirstValue(ClaimIdentityConstants.UserIdClaimType)!;
+            var tenantIdString = context.User.FindFirstValue(ClaimIdentityConstants.TenantIdClaimType)!;
 
             IdentityState.SetCurrent(Guid.Parse(userIdString), Guid.Parse(tenantIdString));
         }

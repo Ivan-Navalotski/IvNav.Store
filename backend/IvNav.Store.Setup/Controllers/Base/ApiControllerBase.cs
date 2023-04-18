@@ -28,7 +28,10 @@ public class ApiControllerBase : ControllerBase
         var newValue = "X-Total-Count";
         if (Response.Headers.ContainsKey(headerName))
         {
-            var currentValue = Response.Headers[headerName].ToList();
+            var currentValue = Response.Headers[headerName]
+                .Where(i => !string.IsNullOrEmpty(i))
+                .Select(i => i!)
+                .ToList();
             Response.Headers.Remove(headerName);
             currentValue.Add(newValue);
             newValue = string.Join(",", currentValue.Select(i => i.Trim()).ToArray());
