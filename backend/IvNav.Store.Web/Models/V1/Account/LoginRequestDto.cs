@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IvNav.Store.Web.Models.V1.Account;
 
+/// <summary>
+/// Login request
+/// </summary>
 public class LoginRequestDto
 {
     /// <summary>

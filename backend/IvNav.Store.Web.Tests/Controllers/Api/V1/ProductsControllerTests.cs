@@ -38,10 +38,11 @@ internal class ProductsControllerTests : TestFixture
         var httpResponse = await _controller.ReadProduct(productId, default);
 
         // assert
-        Assert.NotNull(httpResponse);
+        Assert.That(httpResponse, Is.Not.Null);
         Assert.That(httpResponse, Is.TypeOf<OkObjectResult>());
+
         var result = ((OkObjectResult)httpResponse).Value;
-        Assert.NotNull(result);
+        Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.TypeOf<ReadProductResponseDto>());
         MediatorMock.Verify(mediator => mediator.Send(It.IsAny<ReadProductRequest>(), It.IsAny<CancellationToken>()),
             Times.Once);
@@ -62,7 +63,7 @@ internal class ProductsControllerTests : TestFixture
         var httpResponse = await _controller.ReadProduct(productId, default);
 
         // assert
-        Assert.NotNull(httpResponse);
+        Assert.That(httpResponse, Is.Not.Null);
         Assert.That(httpResponse, Is.TypeOf<NotFoundResult>());
         MediatorMock
             .Verify(mediator => mediator.Send(It.IsAny<ReadProductRequest>(), It.IsAny<CancellationToken>()),

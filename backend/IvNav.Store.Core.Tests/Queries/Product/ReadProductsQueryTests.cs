@@ -31,8 +31,8 @@ internal class ReadProductsQueryTests : TestFixture
         var response = await _query.Handle(request, default);
 
         // assert
-        Assert.IsNotNull(response);
-        Assert.IsNotNull(response.Items);
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.Items, Is.Not.Null);
 
         for (var i = 0; i < products.Count; i++)
         {
@@ -51,9 +51,10 @@ internal class ReadProductsQueryTests : TestFixture
         var response = await _query.Handle(request, default);
 
         // assert
-        Assert.IsNotNull(response);
-        Assert.IsNotNull(response.Items);
-        Assert.That(0, Is.EqualTo(response.Items.Count));
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.Items, Is.Not.Null);
+
+        Assert.That(response.Items, Is.Empty);
     }
 }
 

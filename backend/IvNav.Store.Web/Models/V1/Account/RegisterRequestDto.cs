@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IvNav.Store.Web.Models.V1.Account;
 
+/// <summary>
+///  Register request
+/// </summary>
 public class RegisterRequestDto
 {
     /// <summary>

@@ -103,7 +103,7 @@ public static class SwaggerConfiguration
             c.OrderActionsBy(apiDesc =>
             {
                 var method = apiDesc.HttpMethod?.ToUpper() ?? "UNKNOWN";
-                var sortingNumber = sorting.ContainsKey(method) ? sorting[method] : sorting["UNKNOWN"];
+                var sortingNumber = sorting.TryGetValue(method, out var value) ? value : sorting["UNKNOWN"];
 
                 var path = apiDesc.RelativePath?.Replace('/', '.');
 

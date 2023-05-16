@@ -26,8 +26,8 @@ internal class ReadProductQueryTests : TestFixture
         var response = await _query.Handle(request, default);
 
         // assert
-        Assert.IsNotNull(response);
-        Assert.IsNotNull(response.Item);
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.Item, Is.Not.Null);
 
         Assert.That(product.Id, Is.EqualTo(response.Item!.Id));
         Assert.That(product.Name, Is.EqualTo(response.Item.Name));
@@ -44,7 +44,7 @@ internal class ReadProductQueryTests : TestFixture
         var response = await _query.Handle(request, default);
 
         // assert
-        Assert.IsNotNull(response);
-        Assert.IsNull(response.Item);
+        Assert.That(response, Is.Not.Null);
+        Assert.That(response.Item, Is.Null);
     }
 }
