@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using IvNav.Store.Common.Constants;
-using IvNav.Store.Core.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -26,14 +25,12 @@ internal class SignInUserCommand : IRequestHandler<SignInUserRequest, SignInUser
         if (user == null) return badResponse;
         if (! await _userManager.CheckPasswordAsync(user, request.Password)) return badResponse;
 
-        var jwtHelper = new JwtHelper(_configuration);
-
-        var token = jwtHelper.Generate(new[]
+        var claims = new[]
         {
             new Claim(ClaimIdentityConstants.UserIdClaimType, user.Id),
             new Claim(ClaimIdentityConstants.TenantIdClaimType, Guid.NewGuid().ToString()),
-        });
+        };
 
-        return new SignInUserResponse(token);
+        return new SignInUserResponse(claims);
     }
 }

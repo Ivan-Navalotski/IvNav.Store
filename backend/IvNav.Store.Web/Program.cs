@@ -1,6 +1,6 @@
 using IvNav.Store.Core.Configurations;
-using IvNav.Store.Core.Helpers;
 using IvNav.Store.Setup.Configurations;
+using IvNav.Store.Setup.Helpers;
 using IvNav.Store.Setup.Middleware;
 using IvNav.Store.Web.Helpers;
 
@@ -21,7 +21,10 @@ builder.Services.AddAutoMapperProfiles(o =>
 });
 
 builder.Services.AddCoreDependencies(builder.Configuration);
-builder.Services.AddJwtAuthentication(new JwtHelper(builder.Configuration).GetValidationParameters());
+builder.Services.AddJwtAuthentication(builder.Configuration, o =>
+{
+    o.TokenValidationParameters = new JwtHelper(builder.Configuration).GetValidationParameters();
+});
 builder.Services.AddDefaultApiVersioning();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();

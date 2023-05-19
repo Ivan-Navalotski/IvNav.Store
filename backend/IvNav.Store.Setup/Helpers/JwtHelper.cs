@@ -5,7 +5,7 @@ using System.Text;
 using Ardalis.GuardClauses;
 using Microsoft.Extensions.Configuration;
 
-namespace IvNav.Store.Core.Helpers;
+namespace IvNav.Store.Setup.Helpers;
 
 public class JwtHelper
 {
@@ -16,7 +16,7 @@ public class JwtHelper
 
     public JwtHelper(IConfiguration configuration)
     {
-        var section = Guard.Against.Null(configuration.GetSection("JwtSettings"));
+        var section = Guard.Against.Null(configuration.GetSection("Authentication:Jwt"));
             
         _secretKey = section.GetValue<string>("Secret")!;
         _expires = section.GetValue<TimeSpan>("Expires");

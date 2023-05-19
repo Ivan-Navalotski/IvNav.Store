@@ -1,14 +1,16 @@
+using System.Security.Claims;
+
 namespace IvNav.Store.Core.Commands.User;
 
 public class SignInUserResponse
 {
     public static SignInUserResponse Error = new();
 
-    public string? Token { get; }
+    public IReadOnlyCollection<Claim>? Claims { get; }
 
-    public SignInUserResponse(string? token)
+    public SignInUserResponse(IReadOnlyCollection<Claim>? claims)
     {
-        Token = token;
+        Claims = claims;
     }
 
     private SignInUserResponse()
