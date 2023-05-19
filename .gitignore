@@ -402,8 +402,4 @@ MigrationBackup/
 # Visual Studio cache/options directory
 .vs/
 /_ReSharper.Caches
-/$tf
-/SignAll.Presentation/.config
-/SignAll.Api/CACHE
-CACHE
-/SignAll.Api/.local-chromium
+/backend/IvNav.Store.Web/appsettings.*.json
