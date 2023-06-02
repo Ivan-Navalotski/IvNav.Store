@@ -29,8 +29,8 @@ public static class DbConfiguration
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<Role>()
-            .AddUserStore<UserStore<User, Role, IdentityDbContext, string, IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>>()
-            .AddRoleStore<RoleStore<Role, IdentityDbContext, string, UserRole, IdentityRoleClaim<string>>>()
+            .AddUserStore<UserStore<User, Role, IdentityDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
+            .AddRoleStore<RoleStore<Role, IdentityDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
             .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
             .AddEntityFrameworkStores<IdentityDbContext>();
 

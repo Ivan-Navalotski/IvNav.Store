@@ -27,6 +27,6 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
             return RegisterUserResponse.Error;
         }
 
-        return new RegisterUserResponse();
+        return new RegisterUserResponse(true);
     }
 }

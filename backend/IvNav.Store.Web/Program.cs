@@ -2,12 +2,13 @@ using IvNav.Store.Core.Configurations;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Helpers;
 using IvNav.Store.Setup.Middleware;
-using IvNav.Store.Web.Helpers;
+using IvNav.Store.Web.Configurations;
+using IvNav.Store.Web.Helpers.Mapper;
 
 // Builder
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddAppSettings();
+builder.AddAppSettings("appsettings-api-info.json", "appsettings-logger.json");
 builder.AddLogger();
 
 builder.Services.AddCors(options =>
@@ -21,7 +22,7 @@ builder.Services.AddAutoMapperProfiles(o =>
 });
 
 builder.Services.AddCoreDependencies(builder.Configuration);
-builder.Services.AddJwtAuthentication(builder.Configuration, o =>
+builder.Services.AddAuthentication(builder.Configuration, o =>
 {
     o.TokenValidationParameters = new JwtHelper(builder.Configuration).GetValidationParameters();
 });

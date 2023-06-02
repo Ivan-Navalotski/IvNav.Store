@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IvNav.Store.Infrastructure.Contexts;
 
-internal class IdentityDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>,
-    UserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IIdentityContext
+internal class IdentityDbContext : IdentityDbContext<User, Role, Guid, IdentityUserClaim<Guid>,
+    UserRole, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>, IIdentityContext
 {
     private const string Schema = "identity";
 
@@ -22,4 +22,6 @@ internal class IdentityDbContext : IdentityDbContext<User, Role, string, Identit
 
         modelBuilder.HasDefaultSchema(Schema);
     }
+
+    public DbSet<UserExternalProviderLink> UserExternalProviderLinks { get; set; } = null!;
 }

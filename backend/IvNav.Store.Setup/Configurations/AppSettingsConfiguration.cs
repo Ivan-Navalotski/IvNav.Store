@@ -12,9 +12,12 @@ public static class AppSettingsConfiguration
     /// AddAppSettings
     /// </summary>
     /// <param name="builder"></param>
-    public static void AddAppSettings(this WebApplicationBuilder builder)
+    /// <param name="fileNames"></param>
+    public static void AddAppSettings(this WebApplicationBuilder builder, params string[] fileNames)
     {
-        builder.Configuration.AddJsonFile("appsettings-api-info.json", true);
-        builder.Configuration.AddJsonFile("appsettings-logger.json", true);
+        foreach (var fileName in fileNames)
+        {
+            builder.Configuration.AddJsonFile(fileName, true);
+        }
     }
 }

@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Authentication;
+using IvNav.Store.Web.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 
-namespace IvNav.Store.Setup.Configurations;
+namespace IvNav.Store.Web.Configurations;
 
 /// <summary>
 /// AuthenticationConfiguration
@@ -37,7 +34,7 @@ public static class AuthenticationConfiguration
     /// <param name="configuration"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services,
+    public static IServiceCollection AddAuthentication(this IServiceCollection services,
         IConfiguration configuration, Action<AddJwtAuthenticationOptions>? options)
     {
         const string defScheme = "JWT_OR_COOKIE";
@@ -85,7 +82,9 @@ public static class AuthenticationConfiguration
                     // filter by auth type
                     var authorization = context.Request.Headers[HeaderNames.Authorization];
                     if (!string.IsNullOrEmpty(authorization) && ((string)authorization!).StartsWith("Bearer "))
+                    {
                         return JwtBearerDefaults.AuthenticationScheme;
+                    }
 
                     // otherwise always check for cookie auth
                     return CookieAuthenticationDefaults.AuthenticationScheme;

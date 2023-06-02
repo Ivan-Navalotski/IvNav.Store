@@ -2,10 +2,10 @@ using System.Security.Claims;
 using IvNav.Store.Core.Commands.User;
 using IvNav.Store.Setup.Controllers.Base;
 using IvNav.Store.Setup.Helpers;
-using IvNav.Store.Web.Helpers;
 using IvNav.Store.Web.Models.V1.Account;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -79,17 +79,14 @@ public class AccountController : ApiControllerBase
 
         var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!));
 
-        if (response == SignInUserResponse.Error)
+        if (!response.Succeeded)
         {
             return BadRequest();
         }
 
-        var id = new ClaimsIdentity(response.Claims!, AuthHelper.MainAuthScheme, ClaimsIdentity.DefaultNameClaimType,
-            ClaimsIdentity.DefaultRoleClaimType);
+        await SignInCookie(response.Claims!);
 
-        await HttpContext.SignInAsync(AuthHelper.MainAuthScheme, new ClaimsPrincipal(id));
-
-        return NoContent();
+        return Redirect(returnUrl);
     }
 
     /// <summary>
@@ -104,7 +101,7 @@ public class AccountController : ApiControllerBase
     {
         var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!));
 
-        if (response == SignInUserResponse.Error)
+        if (!response.Succeeded)
         {
             return BadRequest();
         }
@@ -135,7 +132,12 @@ public class AccountController : ApiControllerBase
         {
             if (HttpContext.User.Identity.AuthenticationType == provider)
             {
-                return Redirect(returnUrl);
+                var response = await _mediator.Send(new SignInExternalUserRequest(HttpContext.User.Claims.ToList(), provider));
+                if (response.Succeeded)
+                {
+                    await SignInCookie(response.Claims!);
+                    return Redirect(returnUrl);
+                }
             }
 
             await HttpContext.SignOutAsync();
@@ -145,11 +147,21 @@ public class AccountController : ApiControllerBase
         {
             Items =
             {
-                {"provider", provider},
-                {"returnUrl", returnUrl},
+                { "provider", provider },
+                { "returnUrl", returnUrl },
             }
         };
 
         return Challenge(props, provider);
+    }
+
+    private async Task SignInCookie(IEnumerable<Claim> claims)
+    {
+        const string authScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+        var id = new ClaimsIdentity(claims, authScheme, ClaimsIdentity.DefaultNameClaimType,
+            ClaimsIdentity.DefaultRoleClaimType);
+
+        await HttpContext.SignInAsync(authScheme, new ClaimsPrincipal(id));
     }
 }

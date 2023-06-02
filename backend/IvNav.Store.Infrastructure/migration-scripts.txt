@@ -1,0 +1,6 @@
+add-migration <Name> -Context IdentityDbContext -OutputDir "Migrations/IdentityDb"
+add-migration <Name> -Context ApplicationDbContext -OutputDir "Migrations/ApplicationDb"
+
+
+update-database -Context IdentityDbContext
+update-database -Context ApplicationDbContext

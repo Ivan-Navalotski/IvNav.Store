@@ -1,7 +1,7 @@
 using AutoMapper;
 using MediatR;
 using Moq;
-using IvNav.Store.Web.Helpers;
+using IvNav.Store.Web.Helpers.Mapper;
 using NUnit.Framework;
 
 namespace IvNav.Store.Web.Tests.Helpers;

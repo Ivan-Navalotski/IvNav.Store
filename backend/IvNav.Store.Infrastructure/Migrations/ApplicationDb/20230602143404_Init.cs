@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IvNav.Store.Infrastructure.Migrations
+namespace IvNav.Store.Infrastructure.Migrations.ApplicationDb
 {
     /// <inheritdoc />
-    public partial class InitialCreateApp : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

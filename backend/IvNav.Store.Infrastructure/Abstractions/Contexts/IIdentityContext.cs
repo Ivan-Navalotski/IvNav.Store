@@ -1,7 +1,10 @@
 using IvNav.Store.Infrastructure.Abstractions.Contexts.Base;
+using IvNav.Store.Infrastructure.Entities.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace IvNav.Store.Infrastructure.Abstractions.Contexts;
 
-internal interface IIdentityContext : IContextBase
+public interface IIdentityContext : IContextBase
 {
+    DbSet<UserExternalProviderLink> UserExternalProviderLinks { get; }
 }
