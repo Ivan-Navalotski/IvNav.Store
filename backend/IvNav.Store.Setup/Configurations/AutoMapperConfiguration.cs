@@ -9,7 +9,7 @@ namespace IvNav.Store.Setup.Configurations;
 public static class AutoMapperConfiguration
 {
     /// <summary>
-    /// AddAutoMapperProfiles
+    /// Add AutoMapper profiles with compile mappings
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configure"></param>

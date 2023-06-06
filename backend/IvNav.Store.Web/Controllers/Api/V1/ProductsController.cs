@@ -44,8 +44,7 @@ public class ProductsController : ApiControllerBaseSecure
     /// Read product.
     /// </summary>
     /// <returns></returns>
-    [HttpGet]
-    [Route("{id}", Name = nameof(ReadProduct))]
+    [HttpGet("{id}", Name = nameof(ReadProduct))]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductResponseDto))]
     [SwaggerResponse(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ReadProduct(Guid id, CancellationToken cancellationToken)
@@ -53,9 +52,13 @@ public class ProductsController : ApiControllerBaseSecure
         var request = new ReadProductRequest(id);
         var response = await _mediator.Send(request, cancellationToken);
 
-        var responseDto = _mapper.Map<ReadProductResponseDto?>(response.Item!);
+        if (response == ReadProductResponse.NotExists)
+        {
+            return NotFound();
+        }
 
-        return responseDto != null ? Ok(responseDto) : NotFound();
+        var responseDto = _mapper.Map<ReadProductResponseDto?>(response.Item!);
+        return Ok(responseDto);
     }
 
     /// <summary>
@@ -66,12 +69,13 @@ public class ProductsController : ApiControllerBaseSecure
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(ReadProductsResponseDto))]
     public async Task<IActionResult> ReadProducts([FromQuery] ReadProductsRequestDto requestDto, CancellationToken cancellationToken)
     {
-        var request = new ReadProductsRequest(requestDto.Page, requestDto.PageSize);
+        var request = new ReadProductsRequest(requestDto.Offset, requestDto.Limit);
         var response = await _mediator.Send(request, cancellationToken);
 
         var responseDto = new ReadProductsResponseDto
         {
-            Items = _mapper.Map<IReadOnlyCollection<ReadProductResponseDto>>(response.Items)
+            Items = _mapper.Map<IReadOnlyCollection<ReadProductResponseDto>>(response.Items),
+            TotalCount = response.TotalCount,
         };
 
         AddXTotalCountHeaderToResponse(response.TotalCount);

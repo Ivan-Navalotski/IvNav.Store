@@ -4,21 +4,19 @@ namespace IvNav.Store.Core.Extensions.Common;
 
 internal static class QueryableExtensions
 {
-    public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, IPagingRequest? filter)
+    public static IQueryable<T> ApplyPaging<T>(this IQueryable<T> query, IOffsetLimitRequest? request)
     {
-        if (filter == null)
+        if (request == null)
         {
             return query;
         }
 
-        if (filter.PageSize == null || filter.Page == null)
+        if (request.Offset == null || request.Limit == null)
         {
             return query;
         }
 
-        var skip = (filter.Page.Value > 0 ? filter.Page.Value - 1 : 0) * filter.PageSize.Value;
-
-        var queryNew = query.Skip(skip).Take(filter.PageSize.Value);
+        var queryNew = query.Skip(request.Offset.Value).Take(request.Limit.Value);
         return queryNew;
     }
 }

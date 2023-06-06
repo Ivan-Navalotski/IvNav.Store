@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace IvNav.Store.Setup.Helpers;
 
+/// <summary>
+/// Jwt helper
+/// </summary>
 public class JwtHelper
 {
     private readonly string _secretKey;
@@ -24,6 +27,11 @@ public class JwtHelper
         _audience = section.GetValue<string>("Audience")!;
     }
 
+    /// <summary>
+    /// Generate JWT token
+    /// </summary>
+    /// <param name="claims"></param>
+    /// <returns></returns>
     public string Generate(IEnumerable<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -39,6 +47,10 @@ public class JwtHelper
         return tokenHandler.WriteToken(token);
     }
 
+    /// <summary>
+    /// Get JWT token validation parameters
+    /// </summary>
+    /// <returns></returns>
     public TokenValidationParameters GetValidationParameters()
     {
         return new TokenValidationParameters

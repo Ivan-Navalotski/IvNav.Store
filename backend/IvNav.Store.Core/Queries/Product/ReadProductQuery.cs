@@ -17,10 +17,11 @@ internal sealed class ReadProductQuery : IRequestHandler<ReadProductRequest, Rea
     public async Task<ReadProductResponse> Handle(ReadProductRequest request, CancellationToken cancellationToken)
     {
         var entity = await _applicationDbContext.Products
-            .Where(i=> i.Id == request.Id)
+            .Where(i => i.Id == request.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
-
-        return new ReadProductResponse(entity?.MapToModel());
+        return entity != null
+            ? new ReadProductResponse(entity.MapToModel())
+            : ReadProductResponse.NotExists;
     }
 }

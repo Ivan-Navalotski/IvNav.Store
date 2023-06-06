@@ -13,7 +13,6 @@ public static class ApiVersioningConfiguration
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    // ReSharper disable once UnusedMember.Global
     public static IServiceCollection AddDefaultApiVersioning(this IServiceCollection services)
     {
         services

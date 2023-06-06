@@ -5,19 +5,19 @@ namespace IvNav.Store.Setup.Models;
 /// <summary>
 /// Paging request.
 /// </summary>
-public class PagingRequestDto
+public class OffsetLimitRequestDto
 {
     /// <summary>
-    /// Page.
+    /// Offset.
     /// </summary>
-    /// <example>1</example>
-    [Range(1, int.MaxValue)]
-    public int? Page { get; set; }
+    /// <example>0</example>
+    [Range(0, int.MaxValue)]
+    public int? Offset { get; set; }
 
     /// <summary>
-    /// PageSize.
+    /// Limit.
     /// </summary>
     /// <example>25</example>
-    [Range(5, 100)]
-    public int? PageSize { get; set; }
+    [Range(1, 100)]
+    public int? Limit { get; set; }
 }

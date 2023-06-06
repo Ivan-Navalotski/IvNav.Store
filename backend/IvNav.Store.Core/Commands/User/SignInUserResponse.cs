@@ -12,7 +12,7 @@ public class SignInUserResponse
 
     public bool Succeeded { get; }
 
-    public SignInUserResponse(IReadOnlyCollection<Claim>? claims)
+    internal SignInUserResponse(IReadOnlyCollection<Claim>? claims)
     {
         Claims = claims;
         Succeeded = true;

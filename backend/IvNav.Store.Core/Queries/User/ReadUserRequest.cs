@@ -1,10 +1,14 @@
+using Ardalis.GuardClauses;
 using MediatR;
 
 namespace IvNav.Store.Core.Queries.User;
 
 public class ReadUserRequest : IRequest<ReadUserResponse>
 {
-    public string Email { get; set; }
+    public Guid Id { get; }
 
-    public string Provider { get; set; }
+    public ReadUserRequest(Guid id)
+    {
+        Id = Guard.Against.Default(id);
+    }
 }

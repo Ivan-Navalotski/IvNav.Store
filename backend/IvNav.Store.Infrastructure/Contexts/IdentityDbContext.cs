@@ -1,5 +1,7 @@
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
 using IvNav.Store.Infrastructure.Entities.Identity;
+using IvNav.Store.Infrastructure.EntityConfigurations.User;
+using IvNav.Store.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +23,12 @@ internal class IdentityDbContext : IdentityDbContext<User, Role, Guid, IdentityU
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.HasDefaultSchema(Schema);
+
+        // Configurations
+        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new UserExternalProviderLinkConfiguration());
+        modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
     }
 
     public DbSet<UserExternalProviderLink> UserExternalProviderLinks { get; set; } = null!;

@@ -14,6 +14,11 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
 
     public async Task<RegisterUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
+        if (await _userManager.FindByEmailAsync(request.Email) != null)
+        {
+            return RegisterUserResponse.EmailAlreadyExists;
+        }
+
         var user = new Infrastructure.Entities.Identity.User
         {
             Email = request.Email,

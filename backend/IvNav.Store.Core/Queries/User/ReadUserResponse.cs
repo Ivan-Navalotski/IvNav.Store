@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ardalis.GuardClauses;
+using IvNav.Store.Core.Models.User;
 
 namespace IvNav.Store.Core.Queries.User
 {
-    internal class ReadUserResponse
+    public class ReadUserResponse
     {
+        public static ReadUserResponse NotExists = new();
+
+        public UserModel? Item { get; }
+
+        internal ReadUserResponse(UserModel item)
+        {
+            Item = Guard.Against.Null(item);
+        }
+
+        private ReadUserResponse()
+        {
+
+        }
     }
 }

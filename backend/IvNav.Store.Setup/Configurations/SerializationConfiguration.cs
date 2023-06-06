@@ -5,12 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace IvNav.Store.Setup.Configurations;
 
 /// <summary>
-/// SerializationConfiguration
+/// Serialization configuration
 /// </summary>
 public static class SerializationConfiguration
 {
     /// <summary>
-    /// AddJsonOptions
+    /// Add json serializer options
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>

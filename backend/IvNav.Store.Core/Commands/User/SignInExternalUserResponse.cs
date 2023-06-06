@@ -4,7 +4,6 @@ namespace IvNav.Store.Core.Commands.User;
 
 public class SignInExternalUserResponse
 {
-    public static SignInExternalUserResponse InvalidProvider = new();
     public static SignInExternalUserResponse InvalidClaims = new();
     public static SignInExternalUserResponse Error = new();
     public static SignInExternalUserResponse Conflict = new();
@@ -13,7 +12,7 @@ public class SignInExternalUserResponse
 
     public bool Succeeded { get; }
 
-    public SignInExternalUserResponse(IReadOnlyCollection<Claim>? claims)
+    internal SignInExternalUserResponse(IReadOnlyCollection<Claim>? claims)
     {
         Claims = claims;
         Succeeded = true;

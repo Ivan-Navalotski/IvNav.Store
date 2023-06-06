@@ -9,7 +9,7 @@ namespace IvNav.Store.Setup.Configurations;
 public static class AppSettingsConfiguration
 {
     /// <summary>
-    /// AddAppSettings
+    /// Add AppSettings from files
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="fileNames"></param>

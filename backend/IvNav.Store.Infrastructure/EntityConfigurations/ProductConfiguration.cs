@@ -8,7 +8,9 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.HasKey(_ => _.Id);
-        builder.Property(i => i.Id).ValueGeneratedOnAdd();
+        builder
+            .HasKey(i => i.Id);
+        builder
+            .Property(i => i.Id).ValueGeneratedOnAdd();
     }
 }

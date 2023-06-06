@@ -10,7 +10,7 @@ namespace IvNav.Store.Setup.Configurations;
 public static class LoggerConfiguration
 {
     /// <summary>
-    /// AddLogger
+    /// Add logger
     /// </summary>
     /// <param name="builder"></param>
     public static void AddLogger(this WebApplicationBuilder builder)

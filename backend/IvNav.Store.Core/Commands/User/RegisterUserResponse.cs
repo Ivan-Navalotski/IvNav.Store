@@ -8,7 +8,7 @@ public class RegisterUserResponse
 
     public bool Succeeded { get; }
 
-    public RegisterUserResponse(bool succeeded)
+    internal RegisterUserResponse(bool succeeded)
     {
         Succeeded = succeeded;
     }

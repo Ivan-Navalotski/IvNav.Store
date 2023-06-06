@@ -9,38 +9,38 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace IvNav.Store.Setup.Configurations;
 
 /// <summary>
-/// RegisterSwaggerConfiguration
+/// Swagger configuration
 /// </summary>
 public static class SwaggerConfiguration
 {
     /// <summary>
-    /// RegisterSwaggerOptions
+    /// Swagger options
     /// </summary>
     public class RegisterSwaggerOptions
     {
         /// <summary>
-        /// SecurityScheme
+        /// Security scheme for auth
         /// </summary>
         public OpenApiSecurityScheme? SecurityScheme { get; set; }
 
         /// <summary>
-        /// AssembliesForAnnotations
+        /// Assemblies names for applying annotations
         /// </summary>
         public string[]? AssembliesForAnnotations { get; set; }
 
         /// <summary>
-        /// DisableRolesInfo
+        /// Disable information about required roles in method descriptions
         /// </summary>
         public bool DisableRolesInfo { get; set; }
 
         /// <summary>
-        /// DisablePoliciesInfo
+        /// Disable information about required policies in method descriptions
         /// </summary>
         public bool DisablePoliciesInfo { get; set; }
     }
 
     /// <summary>
-    /// AddSwagger
+    /// Add swagger
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
@@ -137,7 +137,7 @@ public static class SwaggerConfiguration
     }
 
     /// <summary>
-    /// UseSwaggerWithUI
+    /// Use registered swagger with UI
     /// </summary>
     /// <param name="app"></param>
     /// <param name="configuration">Configuration</param>

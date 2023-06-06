@@ -33,8 +33,7 @@ public class AccountController : ApiControllerBase
     /// Register
     /// </summary>
     /// <returns></returns>
-    [HttpPost]
-    [Route("[action]")]
+    [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto)
@@ -53,12 +52,11 @@ public class AccountController : ApiControllerBase
     /// SignOut
     /// </summary>
     /// <returns></returns>
-    [HttpGet]
     [Authorize]
-    [Route("SignOut")]
+    [HttpGet("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignOutAsync()
+    public new async Task<IActionResult> SignOut()
     {
         await HttpContext.SignOutAsync();
 
@@ -69,11 +67,10 @@ public class AccountController : ApiControllerBase
     /// Login
     /// </summary>
     /// <returns></returns>
-    [HttpPost]
-    [Route("SignIn")]
+    [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignInAsync([FromForm] LoginRequestDto requestDto, [FromQuery] string? returnUrl)
+    public async Task<IActionResult> SignIn([FromForm] LoginRequestDto requestDto, [FromQuery] string? returnUrl)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
 
@@ -84,7 +81,7 @@ public class AccountController : ApiControllerBase
             return BadRequest();
         }
 
-        await SignInCookie(response.Claims!);
+        await SignInCookieAsync(response.Claims!);
 
         return Redirect(returnUrl);
     }
@@ -93,11 +90,10 @@ public class AccountController : ApiControllerBase
     /// Login
     /// </summary>
     /// <returns></returns>
-    [HttpPost]
-    [Route("SignIn/token")]
+    [HttpPost("SignIn/Token")]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignInTokenAsync([FromForm] LoginRequestDto requestDto)
+    public async Task<IActionResult> SignInByToken([FromForm] LoginRequestDto requestDto)
     {
         var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!));
 
@@ -120,11 +116,10 @@ public class AccountController : ApiControllerBase
     /// <param name="provider">Available values: Google</param>
     /// <param name="returnUrl"></param>
     /// <returns></returns>
-    [HttpGet]
-    [Route("SignIn/external/{provider}")]
+    [HttpGet("SignIn/External/{provider}")]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignInExternalAsync([FromRoute] string provider, [FromQuery] string? returnUrl)
+    public async Task<IActionResult> SignInExternal([FromRoute] string provider, [FromQuery] string? returnUrl)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
 
@@ -135,7 +130,7 @@ public class AccountController : ApiControllerBase
                 var response = await _mediator.Send(new SignInExternalUserRequest(HttpContext.User.Claims.ToList(), provider));
                 if (response.Succeeded)
                 {
-                    await SignInCookie(response.Claims!);
+                    await SignInCookieAsync(response.Claims!);
                     return Redirect(returnUrl);
                 }
             }
@@ -155,7 +150,7 @@ public class AccountController : ApiControllerBase
         return Challenge(props, provider);
     }
 
-    private async Task SignInCookie(IEnumerable<Claim> claims)
+    private async Task SignInCookieAsync(IEnumerable<Claim> claims)
     {
         const string authScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 

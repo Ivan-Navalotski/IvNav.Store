@@ -1,9 +1,10 @@
 using IvNav.Store.Infrastructure.Entities.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace IvNav.Store.Infrastructure.EntityConfigurations.Identity;
+namespace IvNav.Store.Infrastructure.EntityConfigurations.User;
 
-internal class UserExternalProviderLinkConfiguration
+internal class UserExternalProviderLinkConfiguration : IEntityTypeConfiguration<UserExternalProviderLink>
 {
     public void Configure(EntityTypeBuilder<UserExternalProviderLink> builder)
     {

@@ -23,27 +23,38 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
 
     public async Task<SignInExternalUserResponse> Handle(SignInExternalUserRequest request, CancellationToken cancellationToken)
     {
-        var idClaim = request.Claims.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier);
-        var emailClaim = request.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Email);
+        string? GetClaimValue(string type)
+        {
+            return request.Claims.FirstOrDefault(i => i.Type == type)?.Value;
+        }
 
-        if (idClaim == null || emailClaim == null) return SignInExternalUserResponse.InvalidClaims;
+        var id = GetClaimValue(ClaimTypes.NameIdentifier);
+        var email = GetClaimValue(ClaimTypes.Email);
+
+        if (id == null || email == null) return SignInExternalUserResponse.InvalidClaims;
 
 
         var link = await _identityContext.UserExternalProviderLinks
-            .Where(i => i.ExternalId == idClaim.Value && i.Provider == request.Provider)
+            .Where(i => i.ExternalId == id && i.Provider == request.Provider)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (link == null)
         {
-            var user = await _userManager.FindByEmailAsync(emailClaim.Value);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user != null) return SignInExternalUserResponse.Conflict;
 
             user = new Infrastructure.Entities.Identity.User
             {
-                Email = emailClaim.Value,
+                Email = email,
                 UserName = Guid.NewGuid().ToString(),
                 EmailConfirmed = true,
                 NeedSetupPassword = true,
+
+                GivenName = GetClaimValue(ClaimTypes.GivenName),
+                Surname = GetClaimValue(ClaimTypes.Surname),
+                DateOfBirth = DateTime.TryParse(GetClaimValue(ClaimTypes.DateOfBirth), out var dateOfBirth)
+                    ? DateOnly.FromDateTime(dateOfBirth)
+                    : null,
             };
 
             IdentityResult? userCreated = null;
@@ -61,7 +72,7 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
                 {
                     Provider = request.Provider,
                     UserId = user.Id,
-                    ExternalId = idClaim.Value,
+                    ExternalId = id,
                 };
 
                 await _identityContext.UserExternalProviderLinks.AddAsync(link, cancellationToken);

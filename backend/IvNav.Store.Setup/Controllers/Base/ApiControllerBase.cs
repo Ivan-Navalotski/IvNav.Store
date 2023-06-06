@@ -6,11 +6,9 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace IvNav.Store.Setup.Controllers.Base;
 
 /// <summary>
-/// Base api controller
+/// Base versioned api controller
 /// </summary>
 [ApiController]
-// ReSharper disable once RouteTemplates.ControllerRouteParameterIsNotPassedToMethods
-// ReSharper disable once RouteTemplates.RouteParameterConstraintNotResolved
 [Route("api/v{version:apiVersion}/[controller]")]
 [SwaggerResponse(StatusCodes.Status500InternalServerError, Type = typeof(UnhandledExceptionResponseDto))]
 

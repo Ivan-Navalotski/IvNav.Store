@@ -3,14 +3,14 @@ using MediatR;
 
 namespace IvNav.Store.Core.Queries.Product;
 
-public sealed class ReadProductsRequest : IRequest<ReadProductsResponse>, IPagingRequest
+public sealed class ReadProductsRequest : IRequest<ReadProductsResponse>, IOffsetLimitRequest
 {
-    public int? Page { get; }
-    public int? PageSize { get; }
+    public int? Offset { get; }
+    public int? Limit { get; }
 
-    public ReadProductsRequest(int? page, int? pageSize)
+    public ReadProductsRequest(int? offset, int? limit)
     {
-        Page = page;
-        PageSize = pageSize;
+        Offset = offset;
+        Limit = limit;
     }
 }

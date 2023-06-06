@@ -4,12 +4,12 @@ namespace IvNav.Store.Core.Extensions.Entities;
 
 internal static class ProductExtensions
 {
-    internal static ProductModel MapToModel(this Infrastructure.Entities.Product product)
+    internal static ProductModel MapToModel(this Infrastructure.Entities.Product entity)
     {
         return new ProductModel
         {
-            Id = product.Id,
-            Name = product.Name,
+            Id = entity.Id,
+            Name = entity.Name,
         };
     }
 }

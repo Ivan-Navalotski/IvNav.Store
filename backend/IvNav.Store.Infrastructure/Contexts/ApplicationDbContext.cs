@@ -31,8 +31,8 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
 
         // Setup Props
-        SetupTraceableProperties(modelBuilder);
-        SetupTenantEntity(modelBuilder);
+        modelBuilder.SetupTraceableProperties();
+        modelBuilder.SetupTenantEntity();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -57,9 +57,9 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
         LogTraceableData(changes);
     }
 
-    private static void SetTenantInfo(EntityEntry[] changes)
+    private static void SetTenantInfo(IReadOnlyCollection<EntityEntry> changes)
     {
-        if (changes.Length == 0)
+        if (changes.Count == 0)
         {
             return;
         }
@@ -76,9 +76,9 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
         }
     }
 
-    private static void LogTraceableData(EntityEntry[] changes)
+    private static void LogTraceableData(IReadOnlyCollection<EntityEntry> changes)
     {
-        if (changes.Length == 0)
+        if (changes.Count == 0)
         {
             return;
         }
@@ -104,52 +104,6 @@ internal class ApplicationDbContext : DbContext, IApplicationDbContext
                     entry.Property(ShadowPropertyConstants.CreateDateTime).CurrentValue = userId;
                     entry.Property(ShadowPropertyConstants.CreateDateTime).CurrentValue = utcNow;
                 }
-            }
-        }
-    }
-
-    private static void SetupTenantEntity(ModelBuilder modelBuilder)
-    {
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            var entityClrType = entityType.ClrType;
-
-            if (typeof(ITenantEntity).IsAssignableFrom(entityClrType))
-            {
-                var tenantId = IdentityState.Current?.TenantId;
-
-                var entityBuilder = modelBuilder.Entity(entityClrType);
-                entityBuilder.Property<Guid>(ShadowPropertyConstants.TenantId);
-                entityBuilder.AddQueryFilter<ITenantEntity>(x => x.TenantId == tenantId);
-            }
-        }
-    }
-
-    private static void SetupTraceableProperties(ModelBuilder modelBuilder)
-    {
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            var entityClrType = entityType.ClrType;
-
-            if (typeof(ITraceableEntity).IsAssignableFrom(entityClrType))
-            {
-                var entityBuilder = modelBuilder.Entity(entityClrType);
-
-                entityBuilder
-                    .Property<Guid>(ShadowPropertyConstants.CreateUserId)
-                    .IsRequired();
-
-                entityBuilder
-                    .Property<DateTime>(ShadowPropertyConstants.CreateDateTime)
-                    .IsRequired();
-
-                entityBuilder
-                    .Property<Guid>(ShadowPropertyConstants.UpdateUserId)
-                    .IsRequired();
-
-                entityBuilder
-                    .Property<DateTime>(ShadowPropertyConstants.UpdateDateTime)
-                    .IsRequired();
             }
         }
     }

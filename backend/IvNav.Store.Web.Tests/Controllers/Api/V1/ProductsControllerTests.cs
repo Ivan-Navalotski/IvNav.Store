@@ -53,7 +53,7 @@ internal class ProductsControllerTests : TestFixture
     {
         // arrange
         var productId = Guid.NewGuid();
-        var response = new ReadProductResponse(null);
+        var response = ReadProductResponse.NotExists;
 
         MediatorMock
             .Setup(mediator => mediator.Send(It.IsAny<ReadProductRequest>(), It.IsAny<CancellationToken>()))

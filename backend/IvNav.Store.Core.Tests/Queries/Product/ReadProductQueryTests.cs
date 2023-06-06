@@ -45,6 +45,6 @@ internal class ReadProductQueryTests : TestFixture
 
         // assert
         Assert.That(response, Is.Not.Null);
-        Assert.That(response.Item, Is.Null);
+        Assert.That(response, Is.EqualTo(ReadProductResponse.NotExists));
     }
 }
