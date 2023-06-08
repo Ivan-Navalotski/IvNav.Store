@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Web.Tests", "Iv
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{BFE60846-46B4-4C7B-B854-A7DD72BEF1C3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BFE60846-46B4-4C7B-B854-A7DD72BEF1C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +74,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9E60D796-B989-484C-8045-013C3462786D} = {0DD6FA32-86B8-4F61-9E1D-8BA15661CE37}
 		{60F8327E-D414-4F25-AB84-74FF72B120AF} = {0DD6FA32-86B8-4F61-9E1D-8BA15661CE37}
+		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F} = {BFE60846-46B4-4C7B-B854-A7DD72BEF1C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB899EC5-04C9-4212-9E75-76E15CF09ED2}
