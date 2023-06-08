@@ -17,9 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0DD6FA32
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Enums", "IvNav.Store.Enums\IvNav.Store.Enums.csproj", "{6387842E-80BB-439D-BE62-D1568DB80915}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Core.Tests", "IvNav.Store.Core.Tests\IvNav.Store.Core.Tests.csproj", "{9E60D796-B989-484C-8045-013C3462786D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Core.Tests", "IvNav.Store.Core.Tests\IvNav.Store.Core.Tests.csproj", "{9E60D796-B989-484C-8045-013C3462786D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Web.Tests", "IvNav.Store.Web.Tests\IvNav.Store.Web.Tests.csproj", "{60F8327E-D414-4F25-AB84-74FF72B120AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Web.Tests", "IvNav.Store.Web.Tests\IvNav.Store.Web.Tests.csproj", "{60F8327E-D414-4F25-AB84-74FF72B120AF}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{BFE60846-46B4-4C7B-B854-A7DD72BEF1C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +63,10 @@ Global
 		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60F8327E-D414-4F25-AB84-74FF72B120AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

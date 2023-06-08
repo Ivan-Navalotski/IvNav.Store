@@ -1,0 +1,13 @@
+version: '3.4'
+name: ivnav-store
+
+services:
+  ivnav.store.web:
+    container_name: ivnav.store.web
+    image: ${DOCKER_REGISTRY-}ivnavstoreweb
+    build:
+      context: .
+      dockerfile: IvNav.Store.Web/Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
