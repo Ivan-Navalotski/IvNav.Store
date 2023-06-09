@@ -1,8 +1,11 @@
+using IvNav.Store.Core.Configurations;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Middleware;
 
 // Builder
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCoreDependencies(builder.Configuration);
 
 builder.Services.AddDefaultApiVersioning();
 builder.Services.AddControllers();

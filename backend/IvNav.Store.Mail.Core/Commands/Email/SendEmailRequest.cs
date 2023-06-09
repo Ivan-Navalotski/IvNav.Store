@@ -5,16 +5,16 @@ namespace IvNav.Store.Mail.Core.Commands.Email;
 
 public class SendEmailRequest : IRequest<SendEmailResponse>
 {
-    public string Email { get; }
+    public string To { get; }
 
-    public string Title { get; }
+    public string Subject { get; }
 
     public string Body { get; }
 
-    public SendEmailRequest(string email, string title, string body)
+    public SendEmailRequest(string to, string subject, string body)
     {
-        Email = Guard.Against.NullOrEmpty(email);
-        Title = Guard.Against.NullOrEmpty(title);
+        To = Guard.Against.NullOrEmpty(to);
+        Subject = Guard.Against.NullOrEmpty(subject);
         Body = Guard.Against.NullOrEmpty(body);
     }
 }

@@ -50,6 +50,8 @@ namespace IvNav.Store.Core.Interaction.Helpers
             var response = await _daprClient.InvokeMethodWithResponseAsync(
                 GetHttpRequestMessage(method, appId, methodName, data), cancellationToken);
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             await HandleHttpResponseError(method, appId, methodName, response, cancellationToken);
         }
 
@@ -60,6 +62,8 @@ namespace IvNav.Store.Core.Interaction.Helpers
 
             var response = await _daprClient.InvokeMethodWithResponseAsync(
                 GetHttpRequestMessage(method, appId, methodName, data), cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             await HandleHttpResponseError(method, appId, methodName, response, cancellationToken);
 

@@ -5,10 +5,10 @@ namespace IvNav.Store.Mail.Web.Models.V1;
 public class SendEmailRequestDto
 {
     [Required]
-    public string? Email { get; init; }
+    public string? To { get; init; }
 
     [Required]
-    public string? Title { get; init; }
+    public string? Subject { get; init; }
 
     [Required]
     public string? Body { get; init; }

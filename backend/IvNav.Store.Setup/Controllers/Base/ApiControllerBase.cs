@@ -14,6 +14,9 @@ namespace IvNav.Store.Setup.Controllers.Base;
 
 public class ApiControllerBase : ControllerBase
 {
+
+    protected string GetHost => $"{Request.Scheme}://{Request.Host}";
+
     /// <summary>
     /// Add Header X-Total-Count
     /// </summary>

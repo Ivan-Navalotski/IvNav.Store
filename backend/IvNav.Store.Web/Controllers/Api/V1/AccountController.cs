@@ -36,9 +36,17 @@ public class AccountController : ApiControllerBase
     [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto, [FromQuery] string? confirmationReturnUrl, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new RegisterUserRequest(requestDto.Email!, requestDto.Password!), cancellationToken);
+        var confirmationLink = GetHost + Url.RouteUrl(nameof(ConfirmEmail));
+
+        var response = await _mediator.Send(
+            new RegisterUserRequest(
+                requestDto.Email!,
+                requestDto.Password!,
+                confirmationLink,
+                confirmationReturnUrl),
+            cancellationToken);
 
         if (response == RegisterUserResponse.Error)
         {
@@ -46,6 +54,22 @@ public class AccountController : ApiControllerBase
         }
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Email confirmation
+    /// </summary>
+    /// <param name="token"></param>
+    /// <param name="returnUrl"></param>
+    /// <returns></returns>
+    [HttpGet("[action]", Name = nameof(ConfirmEmail))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string token, [FromQuery] string? returnUrl)
+    {
+        if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
+
+        return Redirect(returnUrl);
     }
 
     /// <summary>
@@ -157,6 +181,8 @@ public class AccountController : ApiControllerBase
 
         var id = new ClaimsIdentity(claims, authScheme, ClaimsIdentity.DefaultNameClaimType,
             ClaimsIdentity.DefaultRoleClaimType);
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         await HttpContext.SignInAsync(authScheme, new ClaimsPrincipal(id));
     }
