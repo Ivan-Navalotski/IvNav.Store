@@ -29,6 +29,10 @@ spelling_use_default_exclusion_dictionary = false
 spelling_exclusion_path = .\.spelling-exclusion.dic
 spelling_error_severity = warning
 
+resharper_comment_typo_highlighting = none
+resharper_identifier_typo_highlighting = none
+resharper_string_literal_typo_highlighting = none
+
 # C#
 
 [*.cs]
