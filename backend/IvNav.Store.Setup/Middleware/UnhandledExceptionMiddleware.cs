@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using IvNav.Store.Common.Extensions;
+using IvNav.Store.Setup.Exceptions;
 using IvNav.Store.Setup.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -30,6 +31,15 @@ public class UnhandledExceptionMiddleware
         {
             await _next(context);
         }
+        catch (RequestHeaderException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new UnhandledExceptionResponseDto
+            {
+                Message = e.Message,
+                TraceId = Activity.Current!.Id!
+            });
+        }
         catch (Exception e)
         {
             e
@@ -37,7 +47,7 @@ public class UnhandledExceptionMiddleware
                 .ToList()
                 .ForEach(x => logger.LogError("{message}", x));
 
-            context.Response.StatusCode = 500;
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(new UnhandledExceptionResponseDto
             {
                 Message = "An unexpected fault happened. Please, contact to administrator.",

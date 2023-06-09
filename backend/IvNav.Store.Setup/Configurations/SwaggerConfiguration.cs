@@ -1,10 +1,13 @@
+using IvNav.Store.Setup.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace IvNav.Store.Setup.Configurations;
 
@@ -42,6 +45,29 @@ public static class SwaggerConfiguration
         {
 
         }
+    }
+
+    /// <summary>
+    /// Get Bearer SecurityScheme
+    /// </summary>
+    /// <returns></returns>
+    public static OpenApiSecurityScheme GetBearerSecurityScheme()
+    {
+        var result = new OpenApiSecurityScheme
+        {
+            Description = "Please insert JWT with Bearer into field. Example: \"Bearer MyAccessToken12345\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        };
+
+        return result;
     }
 
     /// <summary>
@@ -134,8 +160,11 @@ public static class SwaggerConfiguration
                 c.AddSecurityDefinition("Bearer", registerOptionsData.SecurityScheme);
             }
 
-            // Auth icon
-            c.OperationFilter<AddAuthorizationHeaderOperationHeader>(registerOptionsData);
+            // Add auth icon
+            c.OperationFilter<AuthorizationHeaderOperationHeader>(registerOptionsData);
+
+            // Add headers
+            c.OperationFilter<HeadersAttributeOperationFilter>();
         });
 
         return services;
@@ -202,11 +231,11 @@ public static class SwaggerConfiguration
         return info;
     }
 
-    internal class AddAuthorizationHeaderOperationHeader : IOperationFilter
+    internal class AuthorizationHeaderOperationHeader : IOperationFilter
     {
         private readonly RegisterSwaggerOptions _registerSwaggerOptions;
 
-        public AddAuthorizationHeaderOperationHeader(RegisterSwaggerOptions registerSwaggerOptions)
+        public AuthorizationHeaderOperationHeader(RegisterSwaggerOptions registerSwaggerOptions)
         {
             _registerSwaggerOptions = registerSwaggerOptions;
         }
@@ -271,26 +300,41 @@ public static class SwaggerConfiguration
         }
     }
 
-    /// <summary>
-    /// Get Bearer SecurityScheme
-    /// </summary>
-    /// <returns></returns>
-    public static OpenApiSecurityScheme GetBearerSecurityScheme()
+    public class HeadersAttributeOperationFilter : IOperationFilter
     {
-        var result = new OpenApiSecurityScheme
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            Description = "Please insert JWT with Bearer into field. Example: \"Bearer MyAccessToken12345\"",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
+            operation.Parameters ??= new List<OpenApiParameter>();
 
-            Reference = new OpenApiReference
+            if (context.MethodInfo.GetCustomAttribute(typeof(RequestHeadersAttribute)) is RequestHeadersAttribute attribute)
             {
-                Type = ReferenceType.SecurityScheme,
-                Id = "Bearer"
-            }
-        };
+                foreach (var header in attribute.Headers)
+                {
+                    var existingParam = operation.Parameters.FirstOrDefault(p =>
+                        p.In == ParameterLocation.Header && p.Name == header.HeaderName);
 
-        return result;
+                    // Remove description from [FromHeader] argument attribute
+                    if (existingParam != null) 
+                    {
+                        operation.Parameters.Remove(existingParam);
+                    }
+
+                    operation.Parameters.Add(new OpenApiParameter
+                    {
+                        Name = header.HeaderName,
+                        In = ParameterLocation.Header,
+                        Description = header.Description,
+                        Required = false,
+                        Schema = string.IsNullOrEmpty(header.DefaultValue)
+                            ? null
+                            : new OpenApiSchema
+                            {
+                                Type = "String",
+                                Default = new OpenApiString(header.DefaultValue)
+                            }
+                    });
+                }
+            }
+        }
     }
 }

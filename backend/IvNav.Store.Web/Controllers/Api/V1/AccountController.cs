@@ -36,9 +36,9 @@ public class AccountController : ApiControllerBase
     [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new RegisterUserRequest(requestDto.Email!, requestDto.Password!));
+        var response = await _mediator.Send(new RegisterUserRequest(requestDto.Email!, requestDto.Password!), cancellationToken);
 
         if (response == RegisterUserResponse.Error)
         {
@@ -70,18 +70,18 @@ public class AccountController : ApiControllerBase
     [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignIn([FromForm] LoginRequestDto requestDto, [FromQuery] string? returnUrl)
+    public async Task<IActionResult> SignIn([FromForm] LoginRequestDto requestDto, [FromQuery] string? returnUrl, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
 
-        var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!));
+        var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!), cancellationToken);
 
         if (!response.Succeeded)
         {
             return BadRequest();
         }
 
-        await SignInCookieAsync(response.Claims!);
+        await SignInCookieAsync(response.Claims!, cancellationToken);
 
         return Redirect(returnUrl);
     }
@@ -93,9 +93,9 @@ public class AccountController : ApiControllerBase
     [HttpPost("SignIn/Token")]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignInByToken([FromForm] LoginRequestDto requestDto)
+    public async Task<IActionResult> SignInByToken([FromForm] LoginRequestDto requestDto, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!));
+        var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!), cancellationToken);
 
         if (!response.Succeeded)
         {
@@ -115,11 +115,12 @@ public class AccountController : ApiControllerBase
     /// </summary>
     /// <param name="provider">Available values: Google</param>
     /// <param name="returnUrl"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("SignIn/External/{provider}")]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SignInExternal([FromRoute] string provider, [FromQuery] string? returnUrl)
+    public async Task<IActionResult> SignInExternal([FromRoute] string provider, [FromQuery] string? returnUrl, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
 
@@ -127,10 +128,10 @@ public class AccountController : ApiControllerBase
         {
             if (HttpContext.User.Identity.AuthenticationType == provider)
             {
-                var response = await _mediator.Send(new SignInExternalUserRequest(HttpContext.User.Claims.ToList(), provider));
+                var response = await _mediator.Send(new SignInExternalUserRequest(HttpContext.User.Claims.ToList(), provider), cancellationToken);
                 if (response.Succeeded)
                 {
-                    await SignInCookieAsync(response.Claims!);
+                    await SignInCookieAsync(response.Claims!, cancellationToken);
                     return Redirect(returnUrl);
                 }
             }
@@ -150,7 +151,7 @@ public class AccountController : ApiControllerBase
         return Challenge(props, provider);
     }
 
-    private async Task SignInCookieAsync(IEnumerable<Claim> claims)
+    private async Task SignInCookieAsync(IEnumerable<Claim> claims, CancellationToken cancellationToken)
     {
         const string authScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 

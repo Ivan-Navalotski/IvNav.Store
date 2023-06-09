@@ -12,5 +12,5 @@ public sealed class CreateProductRequestDto
     /// </summary>
     /// <example>Product1</example>
     [Required]
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 }

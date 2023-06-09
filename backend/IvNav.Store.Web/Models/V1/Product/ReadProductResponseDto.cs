@@ -8,10 +8,10 @@ public sealed class ReadProductResponseDto
     /// <summary>
     /// Product identifier.
     /// </summary>
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 
     /// <summary>
     /// Product name.
     /// </summary>
-    public string Name { get; set; } = null!;
+    public string Name { get; init; } = null!;
 }

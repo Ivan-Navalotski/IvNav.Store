@@ -11,7 +11,7 @@ builder.Services.AddJsonOptions();
 builder.Services.AddSwagger(builder.Configuration, c =>
 {
     c.SecurityScheme = SwaggerConfiguration.GetBearerSecurityScheme();
-    c.AssembliesForAnnotations = new[] { "IvNav.Store.Web", "IvNav.Store.Enums" };
+    c.AssembliesForAnnotations = new[] { "IvNav.Store.Mail.Web", "IvNav.Store.Enums" };
 });
 
 
@@ -22,9 +22,15 @@ app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseApiVersioning();
 
-app.UseMiddleware<ActivityMiddleware>("IvNav.Store.Web.Mail");
+app.UseMiddleware<ActivityMiddleware>("IvNav.Store.Mail.Web");
+app.UseMiddleware<UnhandledExceptionMiddleware>();
+app.UseMiddleware<OperationCanceledMiddleware>();
+app.UseMiddleware<IdentityMiddleware>();
 
 app.MapDefaultControllerRoute();
+
+app.UseMiddleware<RequiredHeadersMiddleware>();
+
 app.UseStaticFiles();
 app.UseSwaggerWithUI(app.Configuration);
 

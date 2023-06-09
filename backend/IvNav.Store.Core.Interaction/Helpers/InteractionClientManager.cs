@@ -51,17 +51,6 @@ namespace IvNav.Store.Core.Interaction.Helpers
                 GetHttpRequestMessage(method, appId, methodName, data), cancellationToken);
 
             await HandleHttpResponseError(method, appId, methodName, response, cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                _logger.LogError(responseContent, method, appId, methodName);
-
-                throw new Exceptions.InvocationException(
-                    appId: appId,
-                    response.StatusCode,
-                    responseContent);
-            }
         }
 
         public async Task<TResponse> InvokeMethodAsync<TRequest, TResponse>(HttpMethod method, AppId appId, string methodName,
@@ -117,7 +106,7 @@ namespace IvNav.Store.Core.Interaction.Helpers
             if (!response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                _logger.LogError(responseContent, method, appId, methodName);
+                _logger.LogError("HandleHttpResponseError {responseContent} {method} {appId} {methodName}", responseContent, method, appId, methodName);
                 
                 throw new Exceptions.InvocationException(
                     appId: appId,

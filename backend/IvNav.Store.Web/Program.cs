@@ -61,7 +61,10 @@ app.MapGet("/", context =>
     context.Response.Redirect("/swagger/index.html", false);
     return Task.CompletedTask;
 });
+
 app.MapDefaultControllerRoute();
+
+app.UseMiddleware<RequiredHeadersMiddleware>();
 
 app.UseStaticFiles();
 app.UseSwaggerWithUI(app.Configuration);

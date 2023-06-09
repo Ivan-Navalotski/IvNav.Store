@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IvNav.Store.Mail.Core\IvNav.Store.Mail.Core.csproj" />
     <ProjectReference Include="..\IvNav.Store.Setup\IvNav.Store.Setup.csproj" />
   </ItemGroup>
 
