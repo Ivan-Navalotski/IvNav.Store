@@ -402,4 +402,6 @@ MigrationBackup/
 # Visual Studio cache/options directory
 .vs/
 /_ReSharper.Caches
-/backend/IvNav.Store.Web/appsettings.*.json
+
+# App settings
+appsettings.*.json
