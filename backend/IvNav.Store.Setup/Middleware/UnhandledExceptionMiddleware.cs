@@ -13,10 +13,6 @@ public class UnhandledExceptionMiddleware
 {
     private readonly RequestDelegate _next;
 
-    /// <summary>
-    /// Ctor
-    /// </summary>
-    /// <param name="next"></param>
     public UnhandledExceptionMiddleware(
         RequestDelegate next)
     {

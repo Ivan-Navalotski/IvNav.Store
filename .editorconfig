@@ -21,6 +21,14 @@ indent_style = ignore
 [*.cs]
 indent_size = 4
 
+# Spelling
+
+spelling_languages = en-us,ru-ru
+spelling_checkable_types = strings,identifiers,comments
+spelling_use_default_exclusion_dictionary = false
+spelling_exclusion_path = .\.spelling-exclusion.dic
+spelling_error_severity = warning
+
 # C#
 
 [*.cs]

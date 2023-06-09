@@ -4,10 +4,42 @@ name: ivnav-store
 services:
   ivnav.store.web:
     container_name: ivnav.store.web
-    image: ${DOCKER_REGISTRY-}ivnavstoreweb
+    image: ${DOCKER_REGISTRY-}ivnavstore-web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     build:
       context: .
       dockerfile: IvNav.Store.Web/Dockerfile
-    ports:
-      - "8080:80"
-      - "8443:443"
+
+  ivnav.store.web-dapr:
+    image: "daprio/daprd:latest"
+    command: [
+      "./daprd",
+      "-app-id", "ivnav-store-web",
+      "-app-port", "443",
+      "-app-ssl", "true"
+    ]
+    depends_on:
+      - ivnav.store.web
+    network_mode: "service:ivnav.store.web"
+
+  ivnav.store.web.mail:
+    container_name: ivnav.store.web.mail
+    image: ${DOCKER_REGISTRY-}ivnavstore-web-mail
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    build:
+      context: .
+      dockerfile: IvNav.Store.Web.Mail/Dockerfile
+
+  ivnav.store.web.mail-dapr:
+    image: "daprio/daprd:latest"
+    command: [
+      "./daprd",
+      "-app-id", "ivnav-store-web-mail",
+      "-app-port", "443",
+      "-app-ssl", "true"
+    ]
+    depends_on:
+      - ivnav.store.web.mail
+    network_mode: "service:ivnav.store.web.mail"

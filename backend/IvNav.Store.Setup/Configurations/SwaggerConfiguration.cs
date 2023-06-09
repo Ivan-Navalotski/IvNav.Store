@@ -37,6 +37,11 @@ public static class SwaggerConfiguration
         /// Disable information about required policies in method descriptions
         /// </summary>
         public bool DisablePoliciesInfo { get; set; }
+
+        internal RegisterSwaggerOptions()
+        {
+
+        }
     }
 
     /// <summary>

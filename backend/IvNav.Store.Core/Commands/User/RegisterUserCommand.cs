@@ -1,3 +1,4 @@
+using IvNav.Store.Core.Interaction.Abstractions.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -6,10 +7,12 @@ namespace IvNav.Store.Core.Commands.User;
 internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, RegisterUserResponse>
 {
     private readonly UserManager<Infrastructure.Entities.Identity.User> _userManager;
+    private readonly IInteractionClientManager _daprClientManager;
 
-    public RegisterUserCommand(UserManager<Infrastructure.Entities.Identity.User> userManager)
+    public RegisterUserCommand(UserManager<Infrastructure.Entities.Identity.User> userManager, IInteractionClientManager daprClientManager)
     {
         _userManager = userManager;
+        _daprClientManager = daprClientManager;
     }
 
     public async Task<RegisterUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)

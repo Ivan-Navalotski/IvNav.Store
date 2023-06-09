@@ -36,9 +36,10 @@ builder.Services.AddSwagger(builder.Configuration, c =>
     c.AssembliesForAnnotations = new[] { "IvNav.Store.Web", "IvNav.Store.Enums" };
 });
 
-var app = builder.Build();
 
 // App
+var app = builder.Build();
+
 app.UseCors("allow-all");
 app.UseForwardedHeaders();
 app.UseHttpsRedirection();

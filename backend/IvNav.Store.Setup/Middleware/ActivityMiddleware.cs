@@ -59,6 +59,7 @@ public class ActivityMiddleware
 
             foreach (var (key, value) in statuses)
             {
+                //activity.SetBaggage(key, value);
                 activity.AddBaggage(key, value);
             }
         }

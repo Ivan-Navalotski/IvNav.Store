@@ -25,6 +25,10 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{BFE60846-46B4-4C7B-B854-A7DD72BEF1C3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Web.Mail", "IvNav.Store.Web.Mail\IvNav.Store.Web.Mail.csproj", "{E5C0C6D3-F0B7-4ECD-BA88-0D0EE9B6EB71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Core.Interaction", "IvNav.Store.Core.Interaction\IvNav.Store.Core.Interaction.csproj", "{F50CFBB7-568C-42C1-8F5E-C7195C20DF03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,14 @@ Global
 		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9EFDD90-3267-43A8-A6B7-FD78E42E532F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C0C6D3-F0B7-4ECD-BA88-0D0EE9B6EB71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C0C6D3-F0B7-4ECD-BA88-0D0EE9B6EB71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C0C6D3-F0B7-4ECD-BA88-0D0EE9B6EB71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C0C6D3-F0B7-4ECD-BA88-0D0EE9B6EB71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F50CFBB7-568C-42C1-8F5E-C7195C20DF03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F50CFBB7-568C-42C1-8F5E-C7195C20DF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F50CFBB7-568C-42C1-8F5E-C7195C20DF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F50CFBB7-568C-42C1-8F5E-C7195C20DF03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
