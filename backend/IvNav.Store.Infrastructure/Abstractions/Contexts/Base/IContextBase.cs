@@ -10,4 +10,6 @@ public interface IContextBase
 
     EntityEntry<TEntity> Entry<TEntity>(TEntity entity)
         where TEntity : class;
+
+    Task<T> BeginTransaction<T>(Func<Task<T>> func, CancellationToken cancellationToken);
 }

@@ -8,7 +8,7 @@ public class UnhandledExceptionResponseDto
     /// <summary>
     /// Message
     /// </summary>
-    public string? Message { get; init; } = null!;
+    public string? Message { get; init; }
 
     /// <summary>
     /// TraceId

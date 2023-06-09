@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  ivnav.store.web:
+  ivnav.store.webapi:
     environment:
       - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
@@ -13,14 +13,14 @@ services:
       - ~/.aspnet/https:/root/.aspnet/https:ro
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
-  ivnav.store.web-dapr:
+  ivnav.store.webapi-dapr:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ~/.aspnet/https:/root/.aspnet/https:ro
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
-  ivnav.store.web.mail:
+  ivnav.store.mail:
     environment:
       - ASPNETCORE_URLS=https://+:443;http://+:80
     ports:
@@ -32,7 +32,7 @@ services:
       - ~/.aspnet/https:/root/.aspnet/https:ro
       - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
 
-  ivnav.store.web.mail-dapr:
+  ivnav.store.mail-dapr:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\IvNav.Store.Common\IvNav.Store.Common.csproj" />
     <ProjectReference Include="..\IvNav.Store.Core.Interaction\IvNav.Store.Core.Interaction.csproj" />
+    <ProjectReference Include="..\IvNav.Store.Enums\IvNav.Store.Enums.csproj" />
     <ProjectReference Include="..\IvNav.Store.Infrastructure\IvNav.Store.Infrastructure.csproj" />
   </ItemGroup>
 

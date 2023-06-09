@@ -1,25 +1,24 @@
+using Ardalis.GuardClauses;
 using System.Security.Claims;
 
 namespace IvNav.Store.Core.Commands.User;
 
 public class SignInUserResponse
 {
-    public static SignInUserResponse NotExists = new();
-    public static SignInUserResponse InvalidPassword = new();
-    public static SignInUserResponse EmailNotConfirmed = new();
+    public bool Succeeded => !Errors.Any();
+
+    public IReadOnlyDictionary<string, string[]> Errors { get; }
 
     public IReadOnlyCollection<Claim>? Claims { get; }
 
-    public bool Succeeded { get; }
+    internal SignInUserResponse(Dictionary<string, List<string>> errors)
+    {
+        Errors = Guard.Against.Null(errors).ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
+    }
 
     internal SignInUserResponse(IReadOnlyCollection<Claim>? claims)
     {
+        Errors = new Dictionary<string, string[]>();
         Claims = claims;
-        Succeeded = true;
-    }
-
-    private SignInUserResponse()
-    {
-
     }
 }

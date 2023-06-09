@@ -1,4 +1,4 @@
-using IvNav.Store.Core.Configurations;
+using IvNav.Store.Mail.Core.Configurations;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Middleware;
 

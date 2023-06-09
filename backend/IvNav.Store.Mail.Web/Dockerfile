@@ -7,16 +7,22 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["IvNav.Store.Web.Report/IvNav.Store.Web.Mail.csproj", "IvNav.Store.Web.Mail/"]
-RUN dotnet restore "IvNav.Store.Web.Mail/IvNav.Store.Web.Mail.csproj"
+COPY ["IvNav.Store.Mail.Web/IvNav.Store.Mail.Web.csproj", "IvNav.Store.Mail.Web/"]
+COPY ["IvNav.Store.Mail.Core/IvNav.Store.Mail.Core.csproj", "IvNav.Store.Mail.Core/"]
+COPY ["IvNav.Store.Setup/IvNav.Store.Setup.csproj", "IvNav.Store.Setup/"]
+COPY ["IvNav.Store.Common/IvNav.Store.Common.csproj", "IvNav.Store.Common/"]
+COPY ["IvNav.Store.Core/IvNav.Store.Core.csproj", "IvNav.Store.Core/"]
+COPY ["IvNav.Store.Core.Interaction/IvNav.Store.Core.Interaction.csproj", "IvNav.Store.Core.Interaction/"]
+COPY ["IvNav.Store.Infrastructure/IvNav.Store.Infrastructure.csproj", "IvNav.Store.Infrastructure/"]
+RUN dotnet restore "IvNav.Store.Mail.Web/IvNav.Store.Mail.Web.csproj"
 COPY . .
-WORKDIR "/src/IvNav.Store.Web.Mail"
-RUN dotnet build "IvNav.Store.Web.Mail.csproj" -c Debug -o /app/build
+WORKDIR "/src/IvNav.Store.Mail.Web"
+RUN dotnet build "IvNav.Store.Mail.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "IvNav.Store.Web.Mail.csproj" -c Debug -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IvNav.Store.Mail.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "IvNav.Store.Web.Mail.dll"]
+ENTRYPOINT ["dotnet", "IvNav.Store.Mail.Web.dll"]

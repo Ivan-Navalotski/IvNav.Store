@@ -1,45 +1,47 @@
 version: '3.4'
 name: ivnav-store
 
+
 services:
-  ivnav.store.web:
-    container_name: ivnav.store.web
-    image: ${DOCKER_REGISTRY-}ivnavstore-web
+  ivnav.store.webapi:
+    container_name: ivnav.store.webapi
+    image: ${DOCKER_REGISTRY-}ivnavstore.webapi
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__DbConnection=${DB_CONNECTION_STRING}
     build:
       context: .
       dockerfile: IvNav.Store.Web/Dockerfile
 
-  ivnav.store.web-dapr:
+  ivnav.store.webapi-dapr:
     image: "daprio/daprd:latest"
     command: [
       "./daprd",
-      "-app-id", "ivnav-store-web",
+      "-app-id", "ivnav-store",
       "-app-port", "443",
       "-app-ssl", "true"
     ]
     depends_on:
-      - ivnav.store.web
-    network_mode: "service:ivnav.store.web"
+      - ivnav.store.webapi
+    network_mode: "service:ivnav.store.webapi"
 
-  ivnav.store.web.mail:
-    container_name: ivnav.store.web.mail
-    image: ${DOCKER_REGISTRY-}ivnavstore-web-mail
+  ivnav.store.mail:
+    container_name: ivnav.store.mail
+    image: ${DOCKER_REGISTRY-}ivnavstore-mail
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     build:
       context: .
-      dockerfile: IvNav.Store.Web.Mail/Dockerfile
+      dockerfile: IvNav.Store.Mail.Web/Dockerfile
 
-  ivnav.store.web.mail-dapr:
+  ivnav.store.mail-dapr:
     image: "daprio/daprd:latest"
     command: [
       "./daprd",
-      "-app-id", "ivnav-store-web-mail",
+      "-app-id", "ivnav-store-mail",
       "-app-port", "443",
       "-app-ssl", "true"
     ]
     depends_on:
-      - ivnav.store.web.mail
-    network_mode: "service:ivnav.store.web.mail"
+      - ivnav.store.mail
+    network_mode: "service:ivnav.store.mail"

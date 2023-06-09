@@ -35,7 +35,7 @@ public class AccountController : ApiControllerBase
     /// <returns></returns>
     [HttpPost("[action]")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
-    [SwaggerResponse(StatusCodes.Status400BadRequest)]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto requestDto, [FromQuery] string? confirmationReturnUrl, CancellationToken cancellationToken)
     {
         var confirmationLink = GetHost + Url.RouteUrl(nameof(ConfirmEmail));
@@ -48,10 +48,7 @@ public class AccountController : ApiControllerBase
                 confirmationReturnUrl),
             cancellationToken);
 
-        if (response == RegisterUserResponse.Error)
-        {
-            return BadRequest();
-        }
+        if (!response.Succeeded) return ReturnValidationProblem(response.Errors);
 
         return NoContent();
     }
@@ -100,10 +97,7 @@ public class AccountController : ApiControllerBase
 
         var response = await _mediator.Send(new SignInUserRequest(requestDto.Email!, requestDto.Password!), cancellationToken);
 
-        if (!response.Succeeded)
-        {
-            return BadRequest();
-        }
+        if (!response.Succeeded) return ReturnValidationProblem(response.Errors);
 
         await SignInCookieAsync(response.Claims!, cancellationToken);
 
@@ -185,5 +179,18 @@ public class AccountController : ApiControllerBase
         cancellationToken.ThrowIfCancellationRequested();
 
         await HttpContext.SignInAsync(authScheme, new ClaimsPrincipal(id));
+    }
+
+    private IActionResult ReturnValidationProblem(IReadOnlyDictionary<string, string[]> errors)
+    {
+        foreach (var keyValuePair in errors)
+        {
+            foreach (var error in keyValuePair.Value)
+            {
+                ModelState.AddModelError(keyValuePair.Key, error);
+            }
+        }
+
+        return ValidationProblem(ModelState);
     }
 }

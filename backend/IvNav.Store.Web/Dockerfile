@@ -10,15 +10,16 @@ WORKDIR /src
 COPY ["IvNav.Store.Web/IvNav.Store.Web.csproj", "IvNav.Store.Web/"]
 COPY ["IvNav.Store.Core/IvNav.Store.Core.csproj", "IvNav.Store.Core/"]
 COPY ["IvNav.Store.Common/IvNav.Store.Common.csproj", "IvNav.Store.Common/"]
+COPY ["IvNav.Store.Core.Interaction/IvNav.Store.Core.Interaction.csproj", "IvNav.Store.Core.Interaction/"]
 COPY ["IvNav.Store.Infrastructure/IvNav.Store.Infrastructure.csproj", "IvNav.Store.Infrastructure/"]
 COPY ["IvNav.Store.Setup/IvNav.Store.Setup.csproj", "IvNav.Store.Setup/"]
 RUN dotnet restore "IvNav.Store.Web/IvNav.Store.Web.csproj"
 COPY . .
 WORKDIR "/src/IvNav.Store.Web"
-RUN dotnet build "IvNav.Store.Web.csproj" -c Debug -o /app/build
+RUN dotnet build "IvNav.Store.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "IvNav.Store.Web.csproj" -c Debug -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IvNav.Store.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

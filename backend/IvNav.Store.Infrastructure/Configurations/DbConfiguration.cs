@@ -14,12 +14,14 @@ public static class DbConfiguration
 {
     public static IServiceCollection AddDbDependencies(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("DbConnection");
+
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DbConnection")),
+            options.UseSqlServer(connectionString),
             ServiceLifetime.Transient);
 
         services.AddDbContext<IIdentityContext, IdentityDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DbConnection")),
+            options.UseSqlServer(connectionString),
             ServiceLifetime.Transient);
 
 
@@ -32,7 +34,8 @@ public static class DbConfiguration
             .AddUserStore<UserStore<User, Role, IdentityDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
             .AddRoleStore<RoleStore<Role, IdentityDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
             .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
-            .AddEntityFrameworkStores<IdentityDbContext>();
+            .AddEntityFrameworkStores<IdentityDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }

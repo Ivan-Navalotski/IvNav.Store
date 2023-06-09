@@ -32,4 +32,23 @@ internal class IdentityDbContext : IdentityDbContext<User, Role, Guid, IdentityU
     }
 
     public DbSet<UserExternalProviderLink> UserExternalProviderLinks { get; set; } = null!;
+
+    public async Task<T> BeginTransaction<T>(Func<Task<T>> func, CancellationToken cancellationToken)
+    {
+        await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            var res = await func.Invoke();
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return res;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
 }

@@ -10,6 +10,18 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
     private readonly UserManager<Infrastructure.Entities.Identity.User> _userManager;
     private readonly IInteractionClientManager _interactionClientManager;
 
+    private static readonly string[] EmailErrors = {
+        "InvalidEmail",
+    };
+    private static readonly string[] PasswordErrors = {
+        "PasswordTooShort",
+        "PasswordRequiresUniqueChars",
+        "PasswordRequiresNonAlphanumeric",
+        "PasswordRequiresNonAlphanumeric",
+        "PasswordRequiresLower",
+        "PasswordRequiresUpper",
+    };
+
     public RegisterUserCommand(UserManager<Infrastructure.Entities.Identity.User> userManager, IInteractionClientManager interactionClientManager)
     {
         _userManager = userManager;
@@ -18,9 +30,15 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
 
     public async Task<RegisterUserResponse> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
     {
+        var errors = new Dictionary<string, List<string>>();
+
+        var emailErrorKey = nameof(request.Email);
+        var passwordErrorKey = nameof(request.Password);
+
         if (await _userManager.FindByEmailAsync(request.Email) != null)
         {
-            return RegisterUserResponse.EmailAlreadyExists;
+            AddError(errors, emailErrorKey, "DuplicateEmail");
+            return new RegisterUserResponse(errors);
         }
 
         var user = new Infrastructure.Entities.Identity.User
@@ -33,19 +51,32 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
 
         if (!userCreated.Succeeded)
         {
-            return RegisterUserResponse.Error;
+            foreach (var userCreatedError in userCreated.Errors)
+            {
+                if (EmailErrors.Any(i => i == userCreatedError.Code))
+                {
+                    AddError(errors, emailErrorKey, userCreatedError.Code);
+                }
+
+                if (PasswordErrors.Any(i => i == userCreatedError.Code))
+                {
+                    AddError(errors, passwordErrorKey, userCreatedError.Code);
+                }
+            }
+
+            return new RegisterUserResponse(errors);
+        }
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        var body = $"{request.ConfirmationUrl}?token={token}";
+        if (!string.IsNullOrEmpty(request.ConfirmationReturnUrl))
+        {
+            body += $"&returnUrl={request.ConfirmationReturnUrl}";
         }
 
         try
         {
-            var token = _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
-
-            var body = $"{request.ConfirmationUrl}?token={token}";
-            if (!string.IsNullOrEmpty(request.ConfirmationReturnUrl))
-            {
-                body += $"&returnUrl={request.ConfirmationReturnUrl}";
-            }
-
             await _interactionClientManager.InvokeMethodAsync(
                 HttpMethod.Post,
                 AppId.MailService,
@@ -60,11 +91,20 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
         }
         catch
         {
+            AddError(errors, emailErrorKey, "ErrorSendingConfirmationLink");
             await _userManager.DeleteAsync(user);
-
-            throw;
         }
 
-        return new RegisterUserResponse(true);
+        return new RegisterUserResponse(errors);
+    }
+
+    private static void AddError(IDictionary<string, List<string>> errors, string key, string error)
+    {
+        if (!errors.ContainsKey(key))
+        {
+            errors.Add(key, new List<string>());
+        }
+
+        errors[key].Add(error);
     }
 }

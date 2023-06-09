@@ -1,20 +1,15 @@
+using Ardalis.GuardClauses;
+
 namespace IvNav.Store.Core.Commands.User;
 
 public class RegisterUserResponse
 {
-    public static RegisterUserResponse EmailAlreadyExists = new();
+    public bool Succeeded => !Errors.Any();
 
-    public static RegisterUserResponse Error = new();
+    public IReadOnlyDictionary<string, string[]> Errors { get; }
 
-    public bool Succeeded { get; }
-
-    internal RegisterUserResponse(bool succeeded)
+    internal RegisterUserResponse(Dictionary<string, List<string>> errors)
     {
-        Succeeded = succeeded;
-    }
-
-    private RegisterUserResponse()
-    {
-
+        Errors = Guard.Against.Null(errors).ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
     }
 }
