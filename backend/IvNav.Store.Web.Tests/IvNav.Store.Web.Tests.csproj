@@ -20,9 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IvNav.Store.Common\IvNav.Store.Common.csproj" />
-    <ProjectReference Include="..\IvNav.Store.Core\IvNav.Store.Core.csproj" />
+    <ProjectReference Include="..\IvNav.Store.Core\IvNav.Store.Identity.Core.csproj" />
     <ProjectReference Include="..\IvNav.Store.Setup\IvNav.Store.Setup.csproj" />
-    <ProjectReference Include="..\IvNav.Store.Web\IvNav.Store.Web.csproj" />
+    <ProjectReference Include="..\IvNav.Store.Web\IvNav.Store.WebApi.Web.csproj" />
   </ItemGroup>
 
 </Project>

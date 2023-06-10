@@ -1,11 +1,11 @@
 namespace IvNav.Store.Infrastructure.Constants;
 
-internal static class ShadowPropertyConstants
+public static class ShadowPropertyConstants
 {
-    internal const string CreateUserId = "CreateUserId";
-    internal const string CreateDateTime = "CreateDateTime";
-    internal const string UpdateUserId = "UpdateUserId";
-    internal const string UpdateDateTime = "UpdateDateTime";
+    public const string CreateUserId = "CreateUserId";
+    public const string CreateDateTime = "CreateDateTime";
+    public const string UpdateUserId = "UpdateUserId";
+    public const string UpdateDateTime = "UpdateDateTime";
 
-    internal const string TenantId = "TenantId";
+    public const string TenantId = "TenantId";
 }

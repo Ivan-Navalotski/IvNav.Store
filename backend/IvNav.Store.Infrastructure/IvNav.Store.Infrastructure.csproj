@@ -27,8 +27,4 @@
     <ProjectReference Include="..\IvNav.Store.Common\IvNav.Store.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\IdentityDb\" />
-  </ItemGroup>
-
 </Project>

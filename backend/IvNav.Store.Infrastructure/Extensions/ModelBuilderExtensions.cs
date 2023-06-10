@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IvNav.Store.Infrastructure.Extensions;
 
-internal static class ModelBuilderExtensions
+public static class ModelBuilderExtensions
 {
     public static void SetupTenantEntity(this ModelBuilder modelBuilder)
     {

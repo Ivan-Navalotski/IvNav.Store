@@ -1,4 +1,4 @@
-namespace IvNav.Store.Web.Mail.Models
+namespace IvNav.Store.Mail.Web.Models
 {
     public class MailResposneDto
     {
