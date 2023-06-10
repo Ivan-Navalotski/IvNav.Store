@@ -59,7 +59,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Identity.Web", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Product.Web", "IvNav.Store.Product.Web\IvNav.Store.Product.Web.csproj", "{82CC7875-5EA1-4F76-B9C8-7569B4F6724F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Product.Web.Tests", "..\IvNav.Store.Product.Web.Tests\IvNav.Store.Product.Web.Tests.csproj", "{64579CFE-C9C4-47F8-9390-B6D2438DAC3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Product.Web.Tests", "IvNav.Store.Product.Web.Tests\IvNav.Store.Product.Web.Tests.csproj", "{64579CFE-C9C4-47F8-9390-B6D2438DAC3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
