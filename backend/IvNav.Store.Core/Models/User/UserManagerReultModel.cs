@@ -1,22 +1,24 @@
 using Ardalis.GuardClauses;
 
-namespace IvNav.Store.Core.Commands.User;
+namespace IvNav.Store.Core.Models.User;
 
-public class RegisterUserResponse
+internal class UserManagerReultModel
 {
+    public Guid? UserId { get; }
     public bool Succeeded { get; }
 
     public IReadOnlyDictionary<string, string[]> Errors { get; }
 
-    internal RegisterUserResponse(IReadOnlyDictionary<string, string[]> errors)
+    internal UserManagerReultModel(Dictionary<string, List<string>> errors)
     {
         Succeeded = false;
         Errors = Guard.Against.Null(errors).ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
     }
 
-    internal RegisterUserResponse()
+    internal UserManagerReultModel(Guid userId)
     {
-        Errors = new Dictionary<string, string[]>();
         Succeeded = true;
+        Errors = new Dictionary<string, string[]>();
+        UserId = Guard.Against.Default(userId);
     }
 }

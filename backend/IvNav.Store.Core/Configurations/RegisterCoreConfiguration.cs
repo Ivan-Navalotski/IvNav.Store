@@ -1,3 +1,5 @@
+using IvNav.Store.Core.Abstractions.Helpers;
+using IvNav.Store.Core.Helpers;
 using IvNav.Store.Core.Interaction.Configurations;
 using IvNav.Store.Infrastructure.Configurations;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +13,8 @@ public static class RegisterCoreConfiguration
     {
         services.AddDbDependencies(configuration);
         services.AddInteractionDependencies();
+
+        services.AddTransient<IUserManager, UserManager>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<MediatRAssembly>());
 
