@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IvNav.Store.Identity.Web.Models.V1.Account;
+namespace IvNav.Store.Identity.Web.Models;
 
 /// <summary>
 ///  Register request

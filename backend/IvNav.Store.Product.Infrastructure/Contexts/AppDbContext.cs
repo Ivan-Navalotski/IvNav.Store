@@ -11,8 +11,6 @@ namespace IvNav.Store.Product.Infrastructure.Contexts;
 
 internal class AppDbContext : DbContext, IAppDbContext
 {
-    private const string Schema = "dbo";
-
     public DbSet<Entities.Product> Products { get; set; } = null!;
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -23,8 +21,6 @@ internal class AppDbContext : DbContext, IAppDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.HasDefaultSchema(Schema);
 
         // Configurations
         modelBuilder.ApplyConfiguration(new ProductConfiguration());

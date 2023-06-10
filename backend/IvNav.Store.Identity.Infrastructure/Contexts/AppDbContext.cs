@@ -10,8 +10,6 @@ namespace IvNav.Store.Identity.Infrastructure.Contexts;
 internal class AppDbContext : IdentityDbContext<User, Role, Guid, IdentityUserClaim<Guid>,
     UserRole, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>, IAppDbContext
 {
-    private const string Schema = "identity";
-
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -20,8 +18,6 @@ internal class AppDbContext : IdentityDbContext<User, Role, Guid, IdentityUserCl
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        modelBuilder.HasDefaultSchema(Schema);
 
         // Configurations
         modelBuilder.ApplyConfiguration(new RoleConfiguration());

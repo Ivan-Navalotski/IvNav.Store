@@ -17,6 +17,11 @@ public static class LoggerConfiguration
     {
         var section = builder.Configuration.GetSection("NLog");
 
+        if (section.Value == null)
+        {
+            return;
+        }
+
         if (bool.TryParse(section.GetSection("Logging:clearProviders").Value, out var clearProviders) && clearProviders)
         {
             builder.Logging.ClearProviders();

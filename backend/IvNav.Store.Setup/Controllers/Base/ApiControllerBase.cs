@@ -6,10 +6,10 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace IvNav.Store.Setup.Controllers.Base;
 
 /// <summary>
-/// Base versioned api controller
+/// Base api controller
 /// </summary>
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/[controller]")]
 [SwaggerResponse(StatusCodes.Status500InternalServerError, Type = typeof(UnhandledExceptionResponseDto))]
 
 public class ApiControllerBase : ControllerBase

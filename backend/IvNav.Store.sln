@@ -51,15 +51,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Testing", "IvNa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2C9A347F-6C4C-423B-AA1B-C56CF5FCF765}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Identity.Core.Tests", "IvNav.Store.Identity.Core.Tests\IvNav.Store.Identity.Core.Tests.csproj", "{2FC9CB53-2940-4DD4-9191-6DB4EB06D851}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Identity.Core.Tests", "IvNav.Store.Identity.Core.Tests\IvNav.Store.Identity.Core.Tests.csproj", "{2FC9CB53-2940-4DD4-9191-6DB4EB06D851}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Identity.Web.Tests", "IvNav.Store.Identity.Web.Tests\IvNav.Store.Identity.Web.Tests.csproj", "{73BAA8EF-2C1D-47AD-8BDA-EFDEFC75A288}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Identity.Web.Tests", "IvNav.Store.Identity.Web.Tests\IvNav.Store.Identity.Web.Tests.csproj", "{73BAA8EF-2C1D-47AD-8BDA-EFDEFC75A288}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Identity.Web", "IvNav.Store.Identity.Web\IvNav.Store.Identity.Web.csproj", "{EE8F5547-35DD-4C56-A264-29A67ADCD8BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Identity.Web", "IvNav.Store.Identity.Web\IvNav.Store.Identity.Web.csproj", "{EE8F5547-35DD-4C56-A264-29A67ADCD8BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Product.Web", "IvNav.Store.Product.Web\IvNav.Store.Product.Web.csproj", "{82CC7875-5EA1-4F76-B9C8-7569B4F6724F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Product.Web", "IvNav.Store.Product.Web\IvNav.Store.Product.Web.csproj", "{82CC7875-5EA1-4F76-B9C8-7569B4F6724F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IvNav.Store.Product.Web.Tests", "IvNav.Store.Product.Web.Tests\IvNav.Store.Product.Web.Tests.csproj", "{64579CFE-C9C4-47F8-9390-B6D2438DAC3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IvNav.Store.Product.Web.Tests", "IvNav.Store.Product.Web.Tests\IvNav.Store.Product.Web.Tests.csproj", "{64579CFE-C9C4-47F8-9390-B6D2438DAC3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

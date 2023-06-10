@@ -21,6 +21,9 @@ indent_style = ignore
 [*.cs]
 indent_size = 4
 
+[*.cshtml]
+indent_size = 4
+
 # Spelling
 
 spelling_languages = en-us,ru-ru

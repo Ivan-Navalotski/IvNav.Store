@@ -1,10 +1,7 @@
-using AutoMapper;
 using IvNav.Store.Identity.Core.Models.User;
 using IvNav.Store.Identity.Core.Queries.User;
-using IvNav.Store.Identity.Web.Controllers.Api.V1;
-using IvNav.Store.Identity.Web.Helpers.Mapper;
-using IvNav.Store.Identity.Web.Models.V1.User;
-using IvNav.Store.Testing.Helpers;
+using IvNav.Store.Identity.Web.Controllers.Api;
+using IvNav.Store.Identity.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -12,11 +9,11 @@ using NUnit.Framework;
 namespace IvNav.Store.Identity.Web.Tests.Controllers.Api.V1;
 
 [TestFixture]
-internal class UserControllerTests : IdentityWebTestFixture
+internal class AccountControllerTests : IdentityWebTestFixture
 {
-    private readonly UserController _controller;
+    private readonly AccountApiController _controller;
 
-    public UserControllerTests()
+    public AccountControllerTests()
     {
         _controller = new(MediatorMock.Object, Mapper);
     }
@@ -41,7 +38,7 @@ internal class UserControllerTests : IdentityWebTestFixture
             .ReturnsAsync(response);
 
         // act
-        var httpResponse = await _controller.UserInfo(default);
+        var httpResponse = await _controller.Info(default);
 
         // assert
         Assert.That(httpResponse, Is.Not.Null);

@@ -1,0 +1,13 @@
+<style>
+    .validation-summary-errors ul {
+        margin: 0;
+    }
+
+</style>
+
+@if (ViewContext.ModelState.IsValid == false)
+{
+    <div class="alert alert-danger">
+        <div asp-validation-summary="All" class="danger"></div>
+    </div>
+}

@@ -1,4 +1,4 @@
-namespace IvNav.Store.Identity.Web.Models.V1.User;
+namespace IvNav.Store.Identity.Web.Models;
 
 /// <summary>
 /// User information.

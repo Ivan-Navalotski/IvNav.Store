@@ -6,7 +6,9 @@ using IvNav.Store.WebApi.Web.Configurations;
 // Builder
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddAppSettings("appsettings-api-info.json", "appsettings-logger.json");
+builder.Configuration.AddJsonFile("appsettings-api-info.json", true);
+builder.Configuration.AddJsonFile("appsettings-logger.json", true);
+
 builder.AddLogger();
 
 builder.Services.AddCors(options =>

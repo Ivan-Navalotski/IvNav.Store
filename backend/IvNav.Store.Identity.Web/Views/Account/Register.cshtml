@@ -1,0 +1,40 @@
+@model IvNav.Store.Identity.Web.ViewModels.RegisterViewModel
+<h1>Login</h1>
+<form asp-controller="Account" asp-action="Register" method="post">
+
+    <div>
+        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl" method="get">
+            Login
+        </a>
+    </div>
+
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="IsNativeClient" />
+
+    <div class="form-group">
+        <label asp-for="Email">Email address</label>
+        <input class="form-control" id="email" asp-for="Email" placeholder="example@gmail.com" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password">Password</label>
+        <input class="form-control" id="password" type="password" asp-for="Password" placeholder="Password" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword">Confirm password</label>
+        <input class="form-control" id="confirm-password" type="password" asp-for="ConfirmPassword" placeholder="Confirm password" />
+    </div>
+
+    <div class="form-footer mt-2 mb-2">
+        <button class="btn btn-primary" value="login">Register</button>
+        @if (Model.IsNativeClient && !string.IsNullOrEmpty(Model.ReturnUrl))
+        {
+            <button type="button" class="btn btn-secondary" href="@Model.ReturnUrl">Cancel</button>
+        }
+    </div>
+
+    <partial name="_ValidationSummary" />
+</form>
+
+
+<partial name="_ExternalLogin" />

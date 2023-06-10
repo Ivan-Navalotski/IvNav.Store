@@ -7,13 +7,8 @@ public static class RegisterCoreConfiguration
 {
     public static IServiceCollection AddCoreDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<MediatRAssembly>());
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(RegisterCoreConfiguration)));
 
         return services;
-    }
-
-    internal class MediatRAssembly
-    {
-
     }
 }

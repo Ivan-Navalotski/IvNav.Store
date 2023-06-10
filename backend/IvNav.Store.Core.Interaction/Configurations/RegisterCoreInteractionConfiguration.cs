@@ -1,4 +1,5 @@
 using IvNav.Store.Core.Interaction.Abstractions.Helpers;
+using IvNav.Store.Core.Interaction.Enums;
 using IvNav.Store.Core.Interaction.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,11 +9,16 @@ public static class RegisterCoreInteractionConfiguration
 {
     public class AddInteractionDependenciesOptions
     {
-        public string ApiPrefix { get; set; } = "api/v1";
+        public IReadOnlyDictionary<AppId, int> ApiVersions { get; }
 
         internal AddInteractionDependenciesOptions()
         {
+            ApiVersions = Enum.GetValues<AppId>().ToDictionary(i => i, _ => 1);
+        }
 
+        internal string GetApiPrefix(AppId appId)
+        {
+            return $"api/v{ApiVersions[appId]}";
         }
     }
 

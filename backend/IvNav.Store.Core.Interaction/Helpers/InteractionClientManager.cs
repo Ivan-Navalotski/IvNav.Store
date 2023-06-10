@@ -18,17 +18,16 @@ namespace IvNav.Store.Core.Interaction.Helpers
         private readonly ILogger<InteractionClientManager> _logger;
         private readonly DaprClient _daprClient;
 
-        private readonly string _apiPrefix;
+        private readonly RegisterCoreInteractionConfiguration.AddInteractionDependenciesOptions _options;
 
         public InteractionClientManager(
             ILogger<InteractionClientManager> logger,
             DaprClient daprClient,
-            RegisterCoreInteractionConfiguration.AddInteractionDependenciesOptions addInteractionDependenciesOptions)
+            RegisterCoreInteractionConfiguration.AddInteractionDependenciesOptions options)
         {
             _logger = logger;
             _daprClient = daprClient;
-
-            _apiPrefix = addInteractionDependenciesOptions.ApiPrefix.TrimStart('/').TrimEnd('/');
+            _options = options;
         }
 
         public Task InvokeMethodAsync(HttpMethod method, AppId appId, string methodName,
@@ -83,7 +82,7 @@ namespace IvNav.Store.Core.Interaction.Helpers
 
         private HttpRequestMessage GetHttpRequestMessage<TRequest>(HttpMethod method, AppId appId, string methodName, TRequest data)
         {
-            var request = _daprClient.CreateInvokeMethodRequest(method, appId.GetAppId(), $"{_apiPrefix}/{methodName}", data);
+            var request = _daprClient.CreateInvokeMethodRequest(method, appId.GetAppId(), $"{_options.GetApiPrefix(appId)}/{methodName}", data);
 
             if (IdentityState.Current != null)
             {

@@ -3,28 +3,32 @@ name: ivnav-store
 
 
 services:
-  ivnav.store.webapi:
-    container_name: ivnav.store.webapi
-    image: ${DOCKER_REGISTRY-}ivnavstore.webapi
+
+  # Identity
+  ivnav.store.identity:
+    container_name: ivnav.store.identity
+    image: ${DOCKER_REGISTRY-}ivnavstore.identity
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - ConnectionStrings__DbConnection=${DB_CONNECTION_STRING}
+      - ConnectionStrings__DbConnection=${DB_CONNECTION_STRING_IDENTITY}
     build:
       context: .
-      dockerfile: IvNav.Store.Web/Dockerfile
+      dockerfile: IvNav.Store.Identity.Web/Dockerfile
 
-  ivnav.store.webapi-dapr:
+  ivnav.store.identity-dapr:
     image: "daprio/daprd:latest"
     command: [
       "./daprd",
-      "-app-id", "ivnav-store",
+      "-app-id", "ivnav-identity",
       "-app-port", "443",
       "-app-ssl", "true"
     ]
     depends_on:
-      - ivnav.store.webapi
-    network_mode: "service:ivnav.store.webapi"
+      - ivnav.store.identity
+    network_mode: "service:ivnav.store.identity"
 
+
+  # Mail
   ivnav.store.mail:
     container_name: ivnav.store.mail
     image: ${DOCKER_REGISTRY-}ivnavstore-mail
@@ -45,3 +49,27 @@ services:
     depends_on:
       - ivnav.store.mail
     network_mode: "service:ivnav.store.mail"
+
+
+  # Product
+  ivnav.store.product:
+    container_name: ivnav.store.product
+    image: ${DOCKER_REGISTRY-}ivnavstore-product
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__DbConnection=${DB_CONNECTION_STRING_PRODUCT}
+    build:
+      context: .
+      dockerfile: IvNav.Store.Product.Web/Dockerfile
+
+  ivnav.store.product-dapr:
+    image: "daprio/daprd:latest"
+    command: [
+      "./daprd",
+      "-app-id", "ivnav-store-product",
+      "-app-port", "443",
+      "-app-ssl", "true"
+    ]
+    depends_on:
+      - ivnav.store.product
+    network_mode: "service:ivnav.store.product"

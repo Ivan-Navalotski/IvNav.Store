@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Ardalis.GuardClauses;
+using IdentityServer4;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 
 namespace IvNav.Store.Identity.Web.Configurations;
 
@@ -12,82 +11,35 @@ namespace IvNav.Store.Identity.Web.Configurations;
 public static class AuthenticationConfiguration
 {
     /// <summary>
-    /// Auth config
-    /// </summary>
-    public class AddJwtAuthenticationOptions
-    {
-        /// <summary>
-        /// Validation params
-        /// </summary>
-        public TokenValidationParameters TokenValidationParameters { get; set; } = new();
-
-        internal AddJwtAuthenticationOptions()
-        {
-        }
-    }
-
-    /// <summary>
     /// AddAutoMapperProfiles
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
-    /// <param name="options"></param>
     /// <returns></returns>
-    public static IServiceCollection AddAuthentication(this IServiceCollection services,
-        IConfiguration configuration, Action<AddJwtAuthenticationOptions>? options)
+    public static IServiceCollection AddIdentityAuthentication(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        const string defScheme = "JWT_OR_COOKIE";
-
         services.AddAuthorization();
 
-        var optionsData = new AddJwtAuthenticationOptions();
-        options?.Invoke(optionsData);
+        var authSection = Guard.Against.Null(configuration.GetSection("AuthenticationSettings"));
 
         services
             .AddAuthentication(o =>
             {
-                o.DefaultScheme = defScheme;
+                o.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
             })
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
+            .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme, o =>
             {
+                o.Authority = authSection.GetValue<string>("IdentityServer:Authority");
+                o.ApiName = "Identity";
                 o.RequireHttpsMetadata = false;
                 o.SaveToken = true;
-                o.TokenValidationParameters = optionsData.TokenValidationParameters;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
-            {
-                o.Events.OnRedirectToLogin = async context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    await context.Response.WriteAsync("");
-                };
-
-                o.Events.OnRedirectToAccessDenied = async context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    await context.Response.WriteAsync("");
-                };
             })
             .AddGoogle(GoogleDefaults.AuthenticationScheme, o =>
             {
-                o.ClientId = configuration["Authentication:Google:ClientId"]!;
-                o.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
-            })
-            .AddPolicyScheme(defScheme, "JWT_OR_COOKIE", o =>
-            {
-                // runs on each request
-                o.ForwardDefaultSelector = context =>
-                {
-                    // filter by auth type
-                    var authorization = context.Request.Headers[HeaderNames.Authorization];
-                    if (!string.IsNullOrEmpty(authorization) && ((string)authorization!).StartsWith("Bearer "))
-                    {
-                        return JwtBearerDefaults.AuthenticationScheme;
-                    }
-
-                    // otherwise always check for cookie auth
-                    return CookieAuthenticationDefaults.AuthenticationScheme;
-                };
+                o.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                o.ClientId = authSection.GetValue<string>("Google:ClientId")!;
+                o.ClientSecret = authSection.GetValue<string>("Google:ClientSecret")!;
             });
 
         return services;

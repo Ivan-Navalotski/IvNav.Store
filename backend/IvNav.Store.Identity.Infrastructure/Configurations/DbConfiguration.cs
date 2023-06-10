@@ -11,9 +11,17 @@ namespace IvNav.Store.Identity.Infrastructure.Configurations;
 
 public static class DbConfiguration
 {
-    public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services, IConfiguration configuration)
+    private const string ConnectionStringName = "DbConnection";
+
+    internal class DbConfigurationAssembly
     {
-        var connectionString = configuration.GetConnectionString("DbConnection");
+
+    }
+
+    public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
         services.AddDbContext<IAppDbContext, AppDbContext>(options =>
             options.UseSqlServer(connectionString),
@@ -33,5 +41,39 @@ public static class DbConfiguration
             .AddDefaultTokenProviders();
 
         return services;
+    }
+
+    public static IIdentityServerBuilder AddIdentityServerContext(this IIdentityServerBuilder builder,
+        IConfiguration configuration, TimeSpan tokenCleanupInterval)
+    {
+        var connectionString = configuration.GetConnectionString(ConnectionStringName);
+
+        var assemblyName = typeof(DbConfiguration).Assembly.FullName;
+
+        // Adds the config data from DB (clients, resources)
+        return builder
+            .AddConfigurationStore(o =>
+            {
+                o.ConfigureDbContext = contextOptionsBuilder =>
+                {
+                    contextOptionsBuilder.UseSqlServer(
+                        connectionString,
+                        bo => bo.MigrationsAssembly(assemblyName));
+                };
+            })
+            // Adds the operational data from DB (codes, tokens, consents)
+            .AddOperationalStore(o =>
+            {
+                o.ConfigureDbContext = contextOptionsBuilder =>
+                {
+                    contextOptionsBuilder.UseSqlServer(
+                        connectionString,
+                        bo => bo.MigrationsAssembly(assemblyName));
+                };
+
+                // Enables automatic token cleanup. this is optional.
+                o.EnableTokenCleanup = true;
+                o.TokenCleanupInterval = (int)Math.Round(tokenCleanupInterval.TotalSeconds);
+            });
     }
 }

@@ -8,6 +8,11 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["IvNav.Store.Product.Web/IvNav.Store.Product.Web.csproj", "IvNav.Store.Product.Web/"]
+COPY ["IvNav.Store.Product.Core/IvNav.Store.Product.Core.csproj", "IvNav.Store.Product.Core/"]
+COPY ["IvNav.Store.Product.Infrastructure/IvNav.Store.Product.Infrastructure.csproj", "IvNav.Store.Product.Infrastructure/"]
+COPY ["IvNav.Store.Infrastructure/IvNav.Store.Infrastructure.csproj", "IvNav.Store.Infrastructure/"]
+COPY ["IvNav.Store.Common/IvNav.Store.Common.csproj", "IvNav.Store.Common/"]
+COPY ["IvNav.Store.Setup/IvNav.Store.Setup.csproj", "IvNav.Store.Setup/"]
 RUN dotnet restore "IvNav.Store.Product.Web/IvNav.Store.Product.Web.csproj"
 COPY . .
 WORKDIR "/src/IvNav.Store.Product.Web"

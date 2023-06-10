@@ -1,48 +1,37 @@
+using IvNav.Store.Identity.Core.Configurations;
 using IvNav.Store.Identity.Web.Configurations;
 using IvNav.Store.Identity.Web.Helpers.Mapper;
 using IvNav.Store.Setup.Configurations;
-using IvNav.Store.Setup.Helpers;
 using IvNav.Store.Setup.Middleware;
 
 // Builder
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddAppSettings("appsettings-api-info.json", "appsettings-logger.json");
+builder.Configuration.AddJsonFile("appsettings-api-info.json", true);
 builder.AddLogger();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("allow-all",
-        configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
 builder.Services.AddAutoMapperProfiles(o =>
 {
     o.AddProfile<WebAutoMapperProfile>();
 });
 
-//builder.Services.AddCoreDependencies(builder.Configuration);
-builder.Services.AddAuthentication(builder.Configuration, o =>
-{
-    o.TokenValidationParameters = new JwtHelper(builder.Configuration).GetValidationParameters();
-});
-builder.Services.AddDefaultApiVersioning();
+builder.Services.AddCoreDependencies(builder.Configuration);
+builder.Services.AddIdentityAuthentication(builder.Configuration);
+builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();
 
 builder.Services.AddSwagger(builder.Configuration, c =>
 {
     c.SecurityScheme = SwaggerConfiguration.GetBearerSecurityScheme();
-    c.AssembliesForAnnotations = new[] { "IvNav.Store.Web", "IvNav.Store.Enums" };
+    c.AssembliesForAnnotations = new[] { "IvNav.Store.Identity.Web", "IvNav.Store.Enums" };
 });
 
 
 // App
 var app = builder.Build();
 
-app.UseCors("allow-all");
-app.UseForwardedHeaders();
-app.UseHttpsRedirection();
-app.UseApiVersioning();
+app.UseCoreIdentityServer();
 
 app.UseRouting();
 
@@ -54,16 +43,13 @@ app.UseMiddleware<UnhandledExceptionMiddleware>();
 app.UseMiddleware<OperationCanceledMiddleware>();
 app.UseMiddleware<IdentityMiddleware>();
 
-
+app.MapRazorPages();
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/swagger/index.html", false);
+    context.Response.Redirect("/Account/Index", false);
     return Task.CompletedTask;
 });
-
 app.MapDefaultControllerRoute();
-
-app.UseMiddleware<RequiredHeadersMiddleware>();
 
 app.UseStaticFiles();
 app.UseSwaggerWithUI(app.Configuration);
