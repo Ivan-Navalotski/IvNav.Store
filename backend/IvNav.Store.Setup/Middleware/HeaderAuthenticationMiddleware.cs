@@ -44,12 +44,12 @@ public class HeaderAuthenticationMiddleware
             {
                 var claims = new List<Claim>
                 {
-                    new(ClaimIdentityConstants.UserIdClaimType, userIdString),
+                    new(ClaimTypes.NameIdentifier, userIdString),
                 };
 
                 if (!string.IsNullOrEmpty(tenantIdString))
                 {
-                    claims.Add(new Claim(ClaimIdentityConstants.TenantIdClaimType, tenantIdString));
+                    //claims.Add(new Claim(ClaimIdentityConstants.TenantIdClaimType, tenantIdString));
                 }
 
                 await context.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims)));

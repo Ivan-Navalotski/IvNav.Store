@@ -1,5 +1,7 @@
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
+using System.Security.Claims;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 using IvNav.Store.Identity.Core.Commands.User;
 using IvNav.Store.Identity.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -7,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IvNav.Store.Identity.Web.Extensions;
-using IdentityServer4;
+using Duende.IdentityServer.Events;
 
 namespace IvNav.Store.Identity.Web.Controllers.Mvc.Account;
 
@@ -16,12 +18,18 @@ public partial class AccountController : Controller
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IClientStore _clientStore;
     private readonly IMediator _mediator;
+    private readonly IEventService _events;
 
-    public AccountController(IIdentityServerInteractionService interaction, IClientStore clientStore, IMediator mediator)
+    public AccountController(
+        IIdentityServerInteractionService interaction,
+        IClientStore clientStore,
+        IMediator mediator,
+        IEventService events)
     {
         _interaction = interaction;
         _clientStore = clientStore;
         _mediator = mediator;
+        _events = events;
     }
 
     [Authorize]
@@ -66,10 +74,26 @@ public partial class AccountController : Controller
             ModelState.AddErrors(response.Errors);
         }
 
+        var context = await _interaction.GetAuthorizationContextAsync(viewModel.ReturnUrl);
+
         if (!ModelState.IsValid)
         {
+            await _events.RaiseAsync(
+                new UserLoginFailureEvent(viewModel.Email,
+                    "invalid credentials",
+                    clientId: context?.Client.ClientId)).ConfigureAwait(true);
+
             return View(viewModel);
         }
+
+        var userId = response.Claims!.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+
+        await _events.RaiseAsync(new UserLoginSuccessEvent(
+            viewModel.Email,
+            userId,
+            userId,
+            clientId: context?.Client.ClientId)).ConfigureAwait(true);
+
 
         await SignInCookieAsync(response.Claims!, cancellationToken);
 

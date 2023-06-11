@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
-using IdentityServer4;
+using Duende.IdentityServer;
+using Google.Api;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -24,23 +25,22 @@ public static class AuthenticationConfiguration
         var authSection = Guard.Against.Null(configuration.GetSection("AuthenticationSettings"));
 
         services
-            .AddAuthentication(o =>
-            {
-                o.DefaultScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-            })
-            .AddIdentityServerAuthentication(JwtBearerDefaults.AuthenticationScheme, o =>
-            {
-                o.Authority = authSection.GetValue<string>("IdentityServer:Authority");
-                o.ApiName = "Identity";
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = true;
-            })
-            .AddGoogle(GoogleDefaults.AuthenticationScheme, o =>
-            {
-                o.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-                o.ClientId = authSection.GetValue<string>("Google:ClientId")!;
-                o.ClientSecret = authSection.GetValue<string>("Google:ClientSecret")!;
-            });
+            .AddAuthentication()
+            //.AddCookie("MyCookie")
+            //.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
+            //{
+            //    o.Authority = authSection.GetValue<string>("IdentityServer:Authority");
+            //    o.Audience = "Identity";
+            //    o.RequireHttpsMetadata = false;
+            //    o.SaveToken = true;
+            //})
+            //.AddGoogle(GoogleDefaults.AuthenticationScheme, o =>
+            //{
+            //    o.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+            //    o.ClientId = authSection.GetValue<string>("Google:ClientId")!;
+            //    o.ClientSecret = authSection.GetValue<string>("Google:ClientSecret")!;
+            //});
+            ;
 
         return services;
     }

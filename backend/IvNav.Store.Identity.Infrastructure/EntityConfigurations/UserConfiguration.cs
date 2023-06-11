@@ -13,13 +13,5 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .Property(i => i.Id)
             .ValueGeneratedOnAdd();
-
-        builder
-            .Property(i => i.DateOfBirth)
-            .HasMaxLength(10)
-            .IsUnicode(false)
-            .HasConversion(i =>
-                i != null ? i.Value.ToString("O") : null,
-                i => i != null ? DateOnly.FromDateTime(DateTime.Parse(i)) : null);
     }
 }

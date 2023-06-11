@@ -1,3 +1,4 @@
+using Duende.IdentityServer.AspNetIdentity;
 using IvNav.Store.Identity.Infrastructure.Abstractions.Contexts;
 using IvNav.Store.Identity.Infrastructure.Contexts;
 using IvNav.Store.Identity.Infrastructure.Entities;
@@ -29,14 +30,14 @@ public static class DbConfiguration
 
 
         services
-            .AddIdentityCore<User>(options =>
+            .AddIdentity<User, Role>(options =>
             {
                 options.User.RequireUniqueEmail = true;
             })
-            .AddRoles<Role>()
-            .AddUserStore<UserStore<User, Role, AppDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
-            .AddRoleStore<RoleStore<Role, AppDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
-            .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
+            //.AddRoles<Role>()
+            //.AddUserStore<UserStore<User, Role, AppDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
+            //.AddRoleStore<RoleStore<Role, AppDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
+            //.AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
@@ -52,7 +53,9 @@ public static class DbConfiguration
 
         // Adds the config data from DB (clients, resources)
         return builder
-            .AddConfigurationStore(o =>
+                .AddAspNetIdentity<User>()
+                //.AddProfileService<ProfileService>()
+                .AddConfigurationStore(o =>
             {
                 o.ConfigureDbContext = contextOptionsBuilder =>
                 {
@@ -74,6 +77,7 @@ public static class DbConfiguration
                 // Enables automatic token cleanup. this is optional.
                 o.EnableTokenCleanup = true;
                 o.TokenCleanupInterval = (int)Math.Round(tokenCleanupInterval.TotalSeconds);
-            });
+            })
+            ;
     }
 }

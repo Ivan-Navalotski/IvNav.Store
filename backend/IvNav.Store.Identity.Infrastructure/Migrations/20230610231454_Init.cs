@@ -31,10 +31,6 @@ namespace IvNav.Store.Identity.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GivenName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateOfBirth = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NeedSetupPassword = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

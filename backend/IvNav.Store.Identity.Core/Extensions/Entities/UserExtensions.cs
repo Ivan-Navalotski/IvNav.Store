@@ -10,10 +10,6 @@ internal static class UserExtensions
         return new UserModel
         {
             Id = entity.Id,
-            GivenName = entity.GivenName,
-            Surname = entity.Surname,
-            DateOfBirth = entity.DateOfBirth,
-            Phone = entity.Phone,
             NeedSetupPassword = entity.NeedSetupPassword,
         };
     }

@@ -17,7 +17,7 @@ internal class SignInUserCommand : IRequestHandler<SignInUserRequest, SignInUser
         var result = await _userManager.SignIn(request.Email, request.Password, cancellationToken);
 
         return result.Succeeded
-            ? new SignInUserResponse(_userManager.GetClaims(result.UserId!.Value))
+            ? new SignInUserResponse(await _userManager.GetClaims(result.UserId!.Value))
             : new SignInUserResponse(result.Errors);
     }
 }

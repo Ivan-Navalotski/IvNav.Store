@@ -5,7 +5,7 @@ namespace IvNav.Store.Identity.Core.Abstractions.Helpers;
 
 internal interface IUserManager
 {
-    IReadOnlyList<Claim> GetClaims(Guid userId);
+    Task<IReadOnlyList<Claim>> GetClaims(Guid userId);
 
     Task<UserManagerReultModel> Create(string email, string password,
         CancellationToken cancellationToken,

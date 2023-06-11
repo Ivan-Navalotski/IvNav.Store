@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using IvNav.Store.Common.Identity;
 using IvNav.Store.Infrastructure.Abstractions.Contexts;
 using MediatR;
@@ -12,9 +13,9 @@ public class CoreTestFixture<TContext> : IDisposable where TContext : DbContext,
 {
     private bool _disposed;
 
-    private readonly Guid _tenantId = Guid.Parse("7fc2daf2-cef0-4bab-89eb-718fb29297d2");
     private readonly Guid _userId = Guid.Parse("144ff3a4-2549-4708-9f74-e8273f85d138");
-
+    public Guid UserId => _userId;
+    
     public TContext AppDbContext { get; }
     public Mock<IMediator> MediatorMock { get; }
 
@@ -25,8 +26,12 @@ public class CoreTestFixture<TContext> : IDisposable where TContext : DbContext,
             .ConfigureWarnings(builder => builder.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .Options;
 
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, _userId.ToString()),
+        };
 
-        IdentityState.SetCurrent(_tenantId, _userId);
+        IdentityState.SetCurrent(claims);
 
         var type = typeof(TContext);
         AppDbContext = (TContext)Activator.CreateInstance(type, options)!;

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+
 namespace IvNav.Store.Common.Identity;
 
 public class IdentityState
@@ -10,18 +12,23 @@ public class IdentityState
     /// </summary>
     public static IdentityState? Current => CurrentLocal.Value;
 
-    public static void SetCurrent(Guid userId, Guid? tenantId)
+    public static void SetCurrent(IEnumerable<Claim> claims)
     {
-        CurrentLocal.Value = new IdentityState(userId, tenantId);
+        var userIdString = claims.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (Guid.TryParse(userIdString, out var userId))
+        {
+            CurrentLocal.Value = new IdentityState(userId);
+        }
     }
 
-    public Guid UserId { get; set; }
+    public Guid UserId { get; }
 
     public Guid? TenantId { get; }
 
-    private IdentityState(Guid userId, Guid? tenantId)
+    private IdentityState(Guid userId)
     {
         UserId = userId;
-        TenantId = tenantId;
+        TenantId = null;
     }
 }

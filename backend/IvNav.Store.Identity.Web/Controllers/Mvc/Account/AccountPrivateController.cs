@@ -1,10 +1,9 @@
-using IdentityServer4.Stores;
 using IvNav.Store.Identity.Web.Extensions;
 using IvNav.Store.Identity.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using IdentityServer4;
-using IvNav.Store.Common.Constants;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Stores;
 
 namespace IvNav.Store.Identity.Web.Controllers.Mvc.Account;
 
@@ -78,7 +77,7 @@ public partial class AccountController
     {
         var claimsCollection = claims.ToList();
 
-        var user = new IdentityServerUser(claimsCollection.First(i => i.Type == ClaimIdentityConstants.UserIdClaimType).Value)
+        var user = new IdentityServerUser(claimsCollection.First(i => i.Type == ClaimTypes.NameIdentifier).Value)
         {
             AdditionalClaims = claimsCollection,
         };

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using IvNav.Store.Common.Constants;
 using IvNav.Store.Common.Extensions;
 using IvNav.Store.Identity.Core.Abstractions.Helpers;
 using IvNav.Store.Identity.Core.Extensions.Entities;
@@ -37,15 +36,12 @@ internal class UserManager : IUserManager
         _appDbContext = appDbContext;
     }
 
-    public IReadOnlyList<Claim> GetClaims(Guid userId)
+    public async Task<IReadOnlyList<Claim>> GetClaims(Guid userId)
     {
-        var claims = new[]
-        {
-            new Claim(ClaimIdentityConstants.UserIdClaimType, userId.ToString()),
-            new Claim(ClaimIdentityConstants.TenantIdClaimType, Guid.NewGuid().ToString()),
-        };
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var claims = await _userManager.GetClaimsAsync(user!);
 
-        return claims;
+        return claims.ToList();
     }
 
     public Task<UserManagerReultModel> Create(string email, string password,
@@ -58,10 +54,11 @@ internal class UserManager : IUserManager
             UserName = Guid.NewGuid().ToString(),
         };
 
-        return Create(user, password, cancellationToken, onAfterCreated);
+        return Create(user, password, Array.Empty<Claim>(), cancellationToken, onAfterCreated);
     }
 
     private async Task<UserManagerReultModel> Create(User user, string password,
+        IEnumerable<Claim> claims,
         CancellationToken cancellationToken,
         Func<Guid, Dictionary<string, List<string>>, Task>? onAfterCreated = null)
     {
@@ -76,6 +73,14 @@ internal class UserManager : IUserManager
         cancellationToken.ThrowIfCancellationRequested();
 
         var userCreated = await _userManager.CreateAsync(user, password);
+
+        var claimsToAdd = claims
+            .Where(i => i.Type != ClaimTypes.NameIdentifier)
+            .ToList();
+
+        claimsToAdd.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+
+        await _userManager.AddClaimsAsync(user, claimsToAdd);
 
         if (!userCreated.Succeeded)
         {
@@ -123,10 +128,10 @@ internal class UserManager : IUserManager
     {
         var errors = new Dictionary<string, List<string>>();
 
-        var id = GetClaimValue(claims, ClaimTypes.NameIdentifier);
+        var idExternal = GetClaimValue(claims, ClaimTypes.NameIdentifier);
         var email = GetClaimValue(claims, ClaimTypes.Email);
 
-        if (id == null)
+        if (idExternal == null)
         {
             errors.Upsert("Id", "ValueIsMissing");
         }
@@ -141,7 +146,7 @@ internal class UserManager : IUserManager
         }
 
         var link = await _appDbContext.UserExternalProviderLinks
-            .Where(i => i.ExternalId == id && i.Provider == provider)
+            .Where(i => i.ExternalId == idExternal && i.Provider == provider)
             .FirstOrDefaultAsync(cancellationToken);
 
         var userId = link?.UserId;
@@ -155,23 +160,29 @@ internal class UserManager : IUserManager
                 return new UserManagerReultModel(errors);
             }
 
+            var claimTypes = new List<string>
+            {
+                ClaimTypes.Email,
+                ClaimTypes.GivenName,
+                ClaimTypes.Surname,
+                ClaimTypes.DateOfBirth,
+            };
+
+            var claimsForUser = claims
+                .Where(i => claimTypes.Contains(i.Type))
+                .ToArray();
+
             user = new User
             {
                 Email = email,
                 UserName = Guid.NewGuid().ToString(),
                 EmailConfirmed = true,
                 NeedSetupPassword = true,
-
-                GivenName = GetClaimValue(claims, ClaimTypes.GivenName),
-                Surname = GetClaimValue(claims, ClaimTypes.Surname),
-                DateOfBirth = DateTime.TryParse(GetClaimValue(claims, ClaimTypes.DateOfBirth), out var dateOfBirth)
-                    ? DateOnly.FromDateTime(dateOfBirth)
-                    : null,
             };
 
             var password = $"{Guid.NewGuid()} {Guid.NewGuid().ToString().ToUpper()}!";
 
-            var userCreated = await Create(user, password, cancellationToken);
+            var userCreated = await Create(user, password, claimsForUser, cancellationToken);
 
             if (!userCreated.Succeeded)
             {
@@ -186,7 +197,7 @@ internal class UserManager : IUserManager
                 {
                     Provider = provider,
                     UserId = user.Id,
-                    ExternalId = id!,
+                    ExternalId = idExternal!,
                 };
 
                 await _appDbContext.UserExternalProviderLinks.AddAsync(link, cancellationToken);

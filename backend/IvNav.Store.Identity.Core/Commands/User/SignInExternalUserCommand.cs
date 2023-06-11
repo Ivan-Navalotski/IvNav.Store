@@ -17,7 +17,7 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
         var result = await _userManager.CreateExternal(request.Claims, request.Provider, cancellationToken);
 
         return result.Succeeded
-            ? new SignInExternalUserResponse(_userManager.GetClaims(result.UserId!.Value))
+            ? new SignInExternalUserResponse(await _userManager.GetClaims(result.UserId!.Value))
             : new SignInExternalUserResponse(result.Errors);
     }
 }

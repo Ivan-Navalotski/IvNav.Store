@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
-using IvNav.Store.Common.Constants;
 using IvNav.Store.Common.Identity;
-using Microsoft.AspNetCore.Authentication;
 
 namespace IvNav.Store.Setup.Middleware;
 
@@ -31,14 +28,7 @@ public class IdentityMiddleware
     {
         if (context.User.Identity?.IsAuthenticated ?? false)
         {
-            var userIdString = context.User.FindFirstValue(ClaimIdentityConstants.UserIdClaimType);
-            var tenantIdString = context.User.FindFirstValue(ClaimIdentityConstants.TenantIdClaimType);
-
-            // Setup IdentityState
-            if (Guid.TryParse(userIdString, out var userId))
-            {
-                IdentityState.SetCurrent(userId, Guid.TryParse(tenantIdString, out var tenantId) ? tenantId : null);
-            }
+            IdentityState.SetCurrent(context.User.Claims);
         }
 
         await _next(context);
