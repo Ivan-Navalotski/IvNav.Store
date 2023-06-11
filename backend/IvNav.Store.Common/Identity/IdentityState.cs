@@ -12,13 +12,13 @@ public class IdentityState
     /// </summary>
     public static IdentityState? Current => CurrentLocal.Value;
 
-    public static void SetCurrent(IEnumerable<Claim> claims)
+    public static void SetCurrent(IEnumerable<Claim> claims, string? bearerToken)
     {
         var userIdString = claims.FirstOrDefault(i => i.Type == ClaimTypes.NameIdentifier)?.Value;
 
         if (Guid.TryParse(userIdString, out var userId))
         {
-            CurrentLocal.Value = new IdentityState(userId);
+            CurrentLocal.Value = new IdentityState(userId, bearerToken);
         }
     }
 
@@ -26,9 +26,12 @@ public class IdentityState
 
     public Guid? TenantId { get; }
 
-    private IdentityState(Guid userId)
+    public string? BearerToken { get; }
+
+    private IdentityState(Guid userId, string? bearerToken)
     {
         UserId = userId;
         TenantId = null;
+        BearerToken = bearerToken;
     }
 }

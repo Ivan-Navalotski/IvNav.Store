@@ -9,7 +9,7 @@
     </div>
 
     <input type="hidden" asp-for="ReturnUrl" />
-    <input type="hidden" asp-for="IsNativeClient" />
+    <input type="hidden" asp-for="IsLocalUrl" />
 
     <div class="form-group">
         <label asp-for="Email">Email address</label>
@@ -27,7 +27,7 @@
 
     <div class="form-footer mt-2 mb-2">
         <button class="btn btn-primary" value="login">Register</button>
-        @if (Model.IsNativeClient && !string.IsNullOrEmpty(Model.ReturnUrl))
+        @if (!Model.IsLocalUrl && !string.IsNullOrEmpty(Model.ReturnUrl))
         {
             <button type="button" class="btn btn-secondary" href="@Model.ReturnUrl">Cancel</button>
         }

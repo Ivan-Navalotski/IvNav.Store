@@ -48,7 +48,7 @@ public class RequiredHeadersMiddleware
                 {
                     var a = JsonSerializer.Deserialize(JsonSerializer.Serialize(headerValue.ToString()), headerData.Type);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw new RequestHeaderException(headerData, $"Header {headerData.HeaderName} has incorrect type. Should be {headerData.Type.Name}");
                 }

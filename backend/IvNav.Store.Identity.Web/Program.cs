@@ -1,5 +1,4 @@
 using IvNav.Store.Identity.Core.Configurations;
-using IvNav.Store.Identity.Web.Configurations;
 using IvNav.Store.Identity.Web.Helpers.Mapper;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Middleware;
@@ -16,7 +15,7 @@ builder.Services.AddAutoMapperProfiles(o =>
 });
 
 builder.Services.AddCoreDependencies(builder.Configuration);
-builder.Services.AddIdentityAuthentication(builder.Configuration);
+builder.Services.AddCustomIdentityServer(builder.Configuration).AddJwtBearerFromConfig(builder.Configuration);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();
@@ -31,7 +30,7 @@ builder.Services.AddSwagger(builder.Configuration, c =>
 // App
 var app = builder.Build();
 
-app.UseCoreIdentityServer();
+app.UseCustomIdentityServer();
 
 app.UseRouting();
 

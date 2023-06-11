@@ -10,9 +10,12 @@ public class SignInExternalUserRequest : IRequest<SignInExternalUserResponse>
 
     public string Provider { get; }
 
-    public SignInExternalUserRequest(IReadOnlyCollection<Claim> claims, string provider)
+    public string? ReturnUrl { get; }
+
+    public SignInExternalUserRequest(IReadOnlyCollection<Claim> claims, string provider, string? returnUrl)
     {
         Claims = Guard.Against.Null(claims);
         Provider = Guard.Against.NullOrEmpty(provider);
+        ReturnUrl = returnUrl;
     }
 }

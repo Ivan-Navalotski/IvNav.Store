@@ -73,18 +73,13 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
         {
             return new List<IdentityResource>
             {
-                new IdentityResources.Profile(),
-            };
-        }
-
-        public static IEnumerable<ApiScope> GetApiScopes()
-        {
-            return new List<ApiScope>
-            {
-                new ApiScope(name: "WebApi", displayName: "MyAPI", new []
+                new IdentityResources.Profile
                 {
-                    ClaimTypes.NameIdentifier,
-                })
+                    UserClaims = new List<string>
+                    {
+                        ClaimTypes.NameIdentifier,
+                    }
+                },
             };
         }
 
@@ -94,15 +89,44 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
             {
                 new ApiResource
                 {
-                    Name = "WebApi",
-                    Scopes = new List<string> { "Identity" },
-                    UserClaims =
+                    Name = "Identity",
+                    Scopes = new List<string>
                     {
-                        //Custom user claims that should be provided when requesting access to this API.
-                        //These claims will be added to the access token, not the ID token!
-                        ClaimTypes.NameIdentifier,
+                        "WebApi",
                     }
-                }
+                },
+                new ApiResource
+                {
+                    Name = "WebApi",
+                    Scopes = new List<string>
+                    {
+                        "WebApi",
+                    }
+                },
+                new ApiResource
+                {
+                    Name = "Product",
+                    Scopes = new List<string>
+                    {
+                        "WebApi",
+                    }
+                },
+                new ApiResource
+                {
+                    Name = "Mail",
+                    Scopes = new List<string>
+                    {
+                        "WebApi",
+                    }
+                },
+            };
+        }
+
+        public static IEnumerable<ApiScope> GetApiScopes()
+        {
+            return new List<ApiScope>
+            {
+                new ApiScope("WebApi", new List<string> { ClaimTypes.NameIdentifier }),
             };
         }
 
@@ -112,19 +136,22 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
             {
                 new Client
                 {
-                    ClientId = "client",
+                    ClientId = "WebApiClient",
 
                     // no interactive user, use the clientid/secret for authentication
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
 
                     // secret for authentication
                     ClientSecrets =
                     {
-                        new Secret("secret".Sha256())
+                        new Secret("WebApiSecret".Sha256())
                     },
 
                     // scopes that client has access to
-                    AllowedScopes = { "WebApi" },
+                    AllowedScopes =
+                    {
+                        "WebApi",
+                    },
 
                     AlwaysSendClientClaims = true,
                     AlwaysIncludeUserClaimsInIdToken = true,

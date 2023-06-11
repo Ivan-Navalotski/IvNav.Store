@@ -1,4 +1,3 @@
-using Duende.IdentityServer.AspNetIdentity;
 using IvNav.Store.Identity.Infrastructure.Abstractions.Contexts;
 using IvNav.Store.Identity.Infrastructure.Contexts;
 using IvNav.Store.Identity.Infrastructure.Entities;
@@ -13,11 +12,6 @@ namespace IvNav.Store.Identity.Infrastructure.Configurations;
 public static class DbConfiguration
 {
     private const string ConnectionStringName = "DbConnection";
-
-    internal class DbConfigurationAssembly
-    {
-
-    }
 
     public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services,
         IConfiguration configuration)
@@ -34,10 +28,10 @@ public static class DbConfiguration
             {
                 options.User.RequireUniqueEmail = true;
             })
-            //.AddRoles<Role>()
-            //.AddUserStore<UserStore<User, Role, AppDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
-            //.AddRoleStore<RoleStore<Role, AppDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
-            //.AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
+            .AddRoles<Role>()
+            .AddUserStore<UserStore<User, Role, AppDbContext, Guid, IdentityUserClaim<Guid>, UserRole, IdentityUserLogin<Guid>, IdentityUserToken<Guid>, IdentityRoleClaim<Guid>>>()
+            .AddRoleStore<RoleStore<Role, AppDbContext, Guid, UserRole, IdentityRoleClaim<Guid>>>()
+            .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, Role>>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
@@ -54,30 +48,29 @@ public static class DbConfiguration
         // Adds the config data from DB (clients, resources)
         return builder
                 .AddAspNetIdentity<User>()
-                //.AddProfileService<ProfileService>()
                 .AddConfigurationStore(o =>
-            {
-                o.ConfigureDbContext = contextOptionsBuilder =>
                 {
-                    contextOptionsBuilder.UseSqlServer(
-                        connectionString,
-                        bo => bo.MigrationsAssembly(assemblyName));
-                };
-            })
-            // Adds the operational data from DB (codes, tokens, consents)
-            .AddOperationalStore(o =>
-            {
-                o.ConfigureDbContext = contextOptionsBuilder =>
+                    o.ConfigureDbContext = contextOptionsBuilder =>
+                    {
+                        contextOptionsBuilder.UseSqlServer(
+                            connectionString,
+                            bo => bo.MigrationsAssembly(assemblyName));
+                    };
+                })
+                // Adds the operational data from DB (codes, tokens, consents)
+                .AddOperationalStore(o =>
                 {
-                    contextOptionsBuilder.UseSqlServer(
-                        connectionString,
-                        bo => bo.MigrationsAssembly(assemblyName));
-                };
+                    o.ConfigureDbContext = contextOptionsBuilder =>
+                    {
+                        contextOptionsBuilder.UseSqlServer(
+                            connectionString,
+                            bo => bo.MigrationsAssembly(assemblyName));
+                    };
 
-                // Enables automatic token cleanup. this is optional.
-                o.EnableTokenCleanup = true;
-                o.TokenCleanupInterval = (int)Math.Round(tokenCleanupInterval.TotalSeconds);
-            })
+                    // Enables automatic token cleanup. this is optional.
+                    o.EnableTokenCleanup = true;
+                    o.TokenCleanupInterval = (int)Math.Round(tokenCleanupInterval.TotalSeconds);
+                })
             ;
     }
 }

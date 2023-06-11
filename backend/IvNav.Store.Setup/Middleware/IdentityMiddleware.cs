@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using IvNav.Store.Common.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace IvNav.Store.Setup.Middleware;
 
@@ -28,7 +30,8 @@ public class IdentityMiddleware
     {
         if (context.User.Identity?.IsAuthenticated ?? false)
         {
-            IdentityState.SetCurrent(context.User.Claims);
+            var token = await context.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme);
+            IdentityState.SetCurrent(context.User.Claims, token);
         }
 
         await _next(context);

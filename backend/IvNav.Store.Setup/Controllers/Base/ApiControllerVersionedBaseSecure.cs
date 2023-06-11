@@ -6,12 +6,12 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace IvNav.Store.Setup.Controllers.Base;
 
 /// <summary>
-/// Base versionded secure controller
+/// Base versioned secure controller
 /// </summary>
 [Authorize]
 [SwaggerResponse(StatusCodes.Status401Unauthorized)]
 [SwaggerResponse(StatusCodes.Status403Forbidden)]
-public class ApiControllerVersionedBaseSecure : ApiControllerBase
+public class ApiControllerVersionedBaseSecure : ApiControllerVersionedBase
 {
     /// <summary>
     /// UserId

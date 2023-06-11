@@ -37,12 +37,27 @@ public class ConnectController : ControllerBase
     /// <returns></returns>
     [HttpPost("token")]
     [Consumes("application/x-www-form-urlencoded")]
-    [SwaggerOperation("Получение токена", TokenDescription + RefreshTokenDescription)]
+    [SwaggerOperation("Get token", TokenDescription + RefreshTokenDescription)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Ok", typeof(ConnectTokenOkResponse))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Error", typeof(ConnectTokenErrorResponse))]
     public IActionResult Token([FromForm] ConnectTokenRequest? model)
     {
-        if (model != null) return Ok();
-        return BadRequest();
+        return model != null
+            ? Ok()
+            : BadRequest();
+    }
+
+    /// <summary>
+    /// Get token
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("userinfo")]
+    [Consumes("application/x-www-form-urlencoded")]
+    [SwaggerOperation("User info")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(Dictionary<string, string>))]
+    public IActionResult UserInfo()
+    {
+        return Ok();
     }
 
     public class ConnectTokenRequest
@@ -125,6 +140,11 @@ public class ConnectController : ControllerBase
         [JsonPropertyName("device_code")]
         [FromForm(Name = "device_code")]
         public string? DeviceCode { get; set; }
+    }
+
+    public class ConnectTokenOkResponse
+    {
+
     }
 
     public class ConnectTokenErrorResponse

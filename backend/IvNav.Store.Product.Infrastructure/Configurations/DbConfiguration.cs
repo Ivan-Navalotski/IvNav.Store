@@ -1,7 +1,5 @@
 using IvNav.Store.Product.Infrastructure.Abstractions.Contexts;
 using IvNav.Store.Product.Infrastructure.Contexts;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

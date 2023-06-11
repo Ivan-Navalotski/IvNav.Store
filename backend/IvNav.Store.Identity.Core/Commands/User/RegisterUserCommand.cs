@@ -1,7 +1,8 @@
-using IvNav.Store.Common.Extensions;
 using IvNav.Store.Core.Interaction.Abstractions.Helpers;
 using IvNav.Store.Core.Interaction.Enums;
 using IvNav.Store.Identity.Core.Abstractions.Helpers;
+using IvNav.Store.Identity.Core.Enums;
+using IvNav.Store.Identity.Core.Extensions;
 using MediatR;
 
 namespace IvNav.Store.Identity.Core.Commands.User;
@@ -47,7 +48,7 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
                 }
                 catch
                 {
-                    errors.Upsert("Email", "ConfirmationLinkSendingError");
+                    errors.AddUserError(UserErrors.EmailError.ConfirmationLinkSendingError);
                 }
             });
 

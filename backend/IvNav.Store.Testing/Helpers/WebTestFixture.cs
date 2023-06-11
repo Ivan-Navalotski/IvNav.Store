@@ -25,7 +25,7 @@ public class WebTestFixture
             new(ClaimTypes.NameIdentifier, _userId.ToString()),
         };
 
-        IdentityState.SetCurrent(claims);
+        IdentityState.SetCurrent(claims, null);
     }
 
     protected virtual void ApplyMappingProfiles(IMapperConfigurationExpression cfg)

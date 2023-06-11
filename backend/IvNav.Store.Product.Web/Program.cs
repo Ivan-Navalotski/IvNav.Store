@@ -1,4 +1,5 @@
 using IvNav.Store.Product.Core.Configurations;
+using IvNav.Store.Product.Web.Helpers.Mapper;
 using IvNav.Store.Setup.Configurations;
 using IvNav.Store.Setup.Middleware;
 
@@ -17,11 +18,12 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddAutoMapperProfiles(o =>
 {
-    //o.AddProfile<WebAutoMapperProfile>();
+    o.AddProfile<WebAutoMapperProfile>();
 });
 
 builder.Services.AddCoreDependencies(builder.Configuration);
-
+builder.Services.AddAuthentication().AddJwtBearerFromConfig(builder.Configuration);
+builder.Services.AddAuthorization();
 builder.Services.AddDefaultApiVersioning();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();

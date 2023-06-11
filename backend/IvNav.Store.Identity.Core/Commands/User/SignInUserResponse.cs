@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using Ardalis.GuardClauses;
 
 namespace IvNav.Store.Identity.Core.Commands.User;
 
@@ -8,18 +8,18 @@ public class SignInUserResponse
 
     public IReadOnlyDictionary<string, string[]> Errors { get; }
 
-    public IReadOnlyCollection<Claim>? Claims { get; }
+    public bool IsLocalUrl { get; }
 
     internal SignInUserResponse(IReadOnlyDictionary<string, string[]> errors)
     {
         Succeeded = false;
-        Errors = errors.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
+        Errors = Guard.Against.Null(errors);
     }
 
-    internal SignInUserResponse(IReadOnlyCollection<Claim>? claims)
+    internal SignInUserResponse(bool isLocalUrl)
     {
         Succeeded = true;
         Errors = new Dictionary<string, string[]>();
-        Claims = claims;
+        IsLocalUrl = isLocalUrl;
     }
 }

@@ -5,5 +5,5 @@ public class RedirectViewModel
     /// <summary>
     /// Url
     /// </summary>
-    public string RedirectUrl { get; init; } = null!;
+    public string ReturnUrl { get; init; } = null!;
 }

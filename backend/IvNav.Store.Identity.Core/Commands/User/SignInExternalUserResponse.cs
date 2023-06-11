@@ -1,5 +1,3 @@
-using System.Security.Claims;
-
 namespace IvNav.Store.Identity.Core.Commands.User;
 
 public class SignInExternalUserResponse
@@ -8,7 +6,7 @@ public class SignInExternalUserResponse
 
     public IReadOnlyDictionary<string, string[]> Errors { get; }
 
-    public IReadOnlyCollection<Claim>? Claims { get; }
+    public bool IsLocalUrl { get; }
 
     internal SignInExternalUserResponse(IReadOnlyDictionary<string, string[]> errors)
     {
@@ -16,10 +14,10 @@ public class SignInExternalUserResponse
         Errors = errors.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
     }
 
-    internal SignInExternalUserResponse(IReadOnlyCollection<Claim>? claims)
+    internal SignInExternalUserResponse(bool isLocalUrl)
     {
         Succeeded = true;
         Errors = new Dictionary<string, string[]>();
-        Claims = claims;
+        IsLocalUrl = isLocalUrl;
     }
 }

@@ -12,14 +12,14 @@ public class SignInViewModel
 
     public bool RememberMe { get; set; }
 
-    public string? ReturnUrl { get; set; }
+    public string? ReturnUrl { get; init; }
 
-    public bool IsValidReturnUrl { get; set; }
+    public bool IsLocalUrl { get; init; }
 
-    public bool EnableLocalLogin { get; set; }
+    public string? ClientName { get; init; }
 
-    public string? ClientName { get; set; }
+    public bool EnableLocalLogin { get; init; }
 
-    public bool IsNativeClient { get; set; }
+    public string? LogoUri { get; init; }
 
 }

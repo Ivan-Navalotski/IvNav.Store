@@ -9,9 +9,15 @@ public class SignInUserRequest : IRequest<SignInUserResponse>
 
     public string Password { get; }
 
-    public SignInUserRequest(string email, string password)
+    public bool RememberMe { get; }
+
+    public string? ReturnUrl { get; }
+
+    public SignInUserRequest(string email, string password, bool rememberMe, string? returnUrl)
     {
         Email = Guard.Against.NullOrEmpty(email);
         Password = Guard.Against.NullOrEmpty(password);
+        RememberMe = rememberMe;
+        ReturnUrl = returnUrl;
     }
 }

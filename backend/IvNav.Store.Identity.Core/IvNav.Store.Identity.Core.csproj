@@ -23,6 +23,7 @@
     <PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
     <PackageReference Include="Duende.IdentityServer" Version="6.3.2" />
     <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.5" />
@@ -33,10 +34,6 @@
     <ProjectReference Include="..\IvNav.Store.Core.Interaction\IvNav.Store.Core.Interaction.csproj" />
     <ProjectReference Include="..\IvNav.Store.Enums\IvNav.Store.Enums.csproj" />
     <ProjectReference Include="..\IvNav.Store.Identity.Infrastructure\IvNav.Store.Identity.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

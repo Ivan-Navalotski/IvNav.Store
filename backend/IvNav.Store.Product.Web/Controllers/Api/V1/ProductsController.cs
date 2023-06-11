@@ -12,7 +12,7 @@ namespace IvNav.Store.Product.Web.Controllers.Api.V1;
 /// <summary>
 /// Products
 /// </summary>
-public class ProductsController : ApiControllerBaseSecure
+public class ProductsController : ApiControllerVersionedBaseSecure
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;

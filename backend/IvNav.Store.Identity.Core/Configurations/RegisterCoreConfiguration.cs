@@ -8,8 +8,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Ardalis.GuardClauses;
 using Duende.IdentityServer;
-using Duende.IdentityServer.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Logging;
 
 namespace IvNav.Store.Identity.Core.Configurations;
 
@@ -19,10 +21,8 @@ public static class RegisterCoreConfiguration
     {
         services.AddInfrastructureDependencies(configuration);
 
-        services.AddIdentityServer(configuration);
-
-
         services.AddTransient<IUserManager, UserManager>();
+        services.AddTransient<ISignInManager, SignInManager>();
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(RegisterCoreConfiguration)));
 
@@ -31,17 +31,17 @@ public static class RegisterCoreConfiguration
         return services;
     }
 
-    private static void AddIdentityServer(this IServiceCollection services, IConfiguration configuration)
+    public static AuthenticationBuilder AddCustomIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
-        var settingsSection = Guard.Against.Null(configuration.GetSection("AuthenticationSettings:IdentityServer"));
+        var authSection = Guard.Against.Null(configuration.GetSection("AuthenticationSettings"));
+        var identityServerSection = Guard.Against.Null(authSection.GetSection("IdentityServer"));
 
-        var publicKey = Guard.Against.NullOrEmpty(settingsSection.GetValue<string>("PublicKey"));
-        var privateKey = Guard.Against.NullOrEmpty(settingsSection.GetValue<string>("PrivateKey"));
+        var publicKey = Guard.Against.NullOrEmpty(identityServerSection.GetValue<string>("PublicKey"));
+        var privateKey = Guard.Against.NullOrEmpty(identityServerSection.GetValue<string>("PrivateKey"));
 
-        var cleanupInterval = Guard.Against.Default(settingsSection.GetValue<TimeSpan>("TokenCleanupInterval"));
+        var cookieName = Guard.Against.NullOrEmpty(identityServerSection.GetValue<string>("CookieName"));
 
-        //var secret = new Secret("WebApiClientId".Sha256());
-        var secret = new Secret("WebApiClientSecret-77-123-1516".Sha256());
+        var cleanupInterval = Guard.Against.Default(identityServerSection.GetValue<TimeSpan>("TokenCleanupInterval"));
 
         // Key
         var rsa = RSA.Create();
@@ -49,15 +49,33 @@ public static class RegisterCoreConfiguration
         rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
         var key = new RsaSecurityKey(rsa);
 
-        // services.AddScoped<IProfileService, CustomProfileService>();
+        if (identityServerSection.GetValue<bool>("ShowPPI"))
+        {
+            IdentityModelEventSource.ShowPII = true;
+        }
 
         services
-            .AddIdentityServer()
+            .AddIdentityServer(options =>
+            {
+                options.Authentication.CookieAuthenticationScheme = cookieName;
+            })
             .AddSigningCredential(key, IdentityServerConstants.RsaSigningAlgorithm.PS256)
             .AddIdentityServerContext(configuration, cleanupInterval);
+
+        services.AddAuthorization();
+
+        return services
+            .AddAuthentication(cookieName)
+            .AddCookie(cookieName)
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, o =>
+            {
+                o.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                o.ClientId = authSection.GetValue<string>($"{GoogleDefaults.AuthenticationScheme}:ClientId")!;
+                o.ClientSecret = authSection.GetValue<string>($"{GoogleDefaults.AuthenticationScheme}:ClientSecret")!;
+            });
     }
 
-    public static IApplicationBuilder UseCoreIdentityServer(this IApplicationBuilder app)
+    public static IApplicationBuilder UseCustomIdentityServer(this IApplicationBuilder app)
     {
         app.UseIdentityServer();
 

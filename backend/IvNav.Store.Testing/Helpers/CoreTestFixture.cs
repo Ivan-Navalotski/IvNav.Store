@@ -31,7 +31,7 @@ public class CoreTestFixture<TContext> : IDisposable where TContext : DbContext,
             new(ClaimTypes.NameIdentifier, _userId.ToString()),
         };
 
-        IdentityState.SetCurrent(claims);
+        IdentityState.SetCurrent(claims, null);
 
         var type = typeof(TContext);
         AppDbContext = (TContext)Activator.CreateInstance(type, options)!;

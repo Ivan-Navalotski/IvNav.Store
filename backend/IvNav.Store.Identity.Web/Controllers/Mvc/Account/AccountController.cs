@@ -1,7 +1,4 @@
-using System.Security.Claims;
 using Duende.IdentityServer;
-using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
 using IvNav.Store.Identity.Core.Commands.User;
 using IvNav.Store.Identity.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -9,30 +6,22 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IvNav.Store.Identity.Web.Extensions;
-using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Extensions;
+using IvNav.Store.Identity.Core.Queries.User;
 
 namespace IvNav.Store.Identity.Web.Controllers.Mvc.Account;
 
-public partial class AccountController : Controller
+[Authorize]
+public class AccountController : Controller
 {
-    private readonly IIdentityServerInteractionService _interaction;
-    private readonly IClientStore _clientStore;
     private readonly IMediator _mediator;
-    private readonly IEventService _events;
 
     public AccountController(
-        IIdentityServerInteractionService interaction,
-        IClientStore clientStore,
-        IMediator mediator,
-        IEventService events)
+        IMediator mediator)
     {
-        _interaction = interaction;
-        _clientStore = clientStore;
         _mediator = mediator;
-        _events = events;
     }
 
-    [Authorize]
     [HttpGet]
     public IActionResult Index()
     {
@@ -45,15 +34,20 @@ public partial class AccountController : Controller
     /// <param name="returnUrl"></param>
     /// <returns></returns>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(string? returnUrl)
     {
-        var redirect = await GetRedirect(returnUrl);
-        if (redirect != null)
+        var response = await _mediator.Send(new ReadIsValidReturnUrlRequest(returnUrl));
+        if (!response.Succeeded)
         {
-            return redirect;
+            return GetIncorrectRedirectUrlResult(returnUrl);
+        }
+        if (HttpContext.User.IsAuthenticated())
+        {
+            return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
         }
 
-        var vm = await GetLoginViewModelAsync(returnUrl).ConfigureAwait(true);
+        var vm = await GetLoginViewModelAsync(returnUrl, response.IsLocalUrl).ConfigureAwait(true);
         return View(vm);
     }
 
@@ -62,55 +56,45 @@ public partial class AccountController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpPost]
+    [AllowAnonymous]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login([FromForm] SignInViewModel viewModel, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(viewModel.ReturnUrl)) viewModel.ReturnUrl = "~/";
-
-        var response = await _mediator.Send(new SignInUserRequest(viewModel.Email!, viewModel.Password!), cancellationToken);
+        var response = await _mediator.Send(
+            new SignInUserRequest(viewModel.Email!, viewModel.Password!, viewModel.RememberMe, viewModel.ReturnUrl), cancellationToken);
 
         if (!response.Succeeded)
         {
             ModelState.AddErrors(response.Errors);
-        }
-
-        var context = await _interaction.GetAuthorizationContextAsync(viewModel.ReturnUrl);
-
-        if (!ModelState.IsValid)
-        {
-            await _events.RaiseAsync(
-                new UserLoginFailureEvent(viewModel.Email,
-                    "invalid credentials",
-                    clientId: context?.Client.ClientId)).ConfigureAwait(true);
-
             return View(viewModel);
         }
 
-        var userId = response.Claims!.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
-
-        await _events.RaiseAsync(new UserLoginSuccessEvent(
-            viewModel.Email,
-            userId,
-            userId,
-            clientId: context?.Client.ClientId)).ConfigureAwait(true);
-
-
-        await SignInCookieAsync(response.Claims!, cancellationToken);
-
-        return Redirect(viewModel.ReturnUrl);
+        return GetSuccessRedirectResult(viewModel.ReturnUrl, response.IsLocalUrl);
     }
 
     /// <summary>
     /// Logout
     /// </summary>
     /// <returns></returns>
-    [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Logout(string? returnUrl)
+    public async Task<IActionResult> Logout(string? returnUrl, CancellationToken cancellationToken)
     {
-        await HttpContext.SignOutAsync();
-        var redirect = await GetRedirect(returnUrl);
-        return redirect!;
+        await _mediator.Send(new SignOutUserRequest(), cancellationToken);
+
+        return GetSuccessRedirectResult(returnUrl, true);
+    }
+
+    /// <summary>
+    /// Confirm email
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult ConfirmEmail(string token, string? returnUrl)
+    {
+        return !string.IsNullOrEmpty(returnUrl)
+            ? Redirect(returnUrl)
+            : RedirectToAction("EmailConfirmed");
     }
 
     /// <summary>
@@ -118,6 +102,7 @@ public partial class AccountController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult EmailConfirmed()
     {
         return View();
@@ -128,20 +113,23 @@ public partial class AccountController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(string? returnUrl)
     {
-        var redirect = await GetRedirect(returnUrl);
-        if (redirect != null)
+        var response = await _mediator.Send(new ReadIsValidReturnUrlRequest(returnUrl));
+        if (!response.Succeeded)
         {
-            return redirect;
+            return GetIncorrectRedirectUrlResult(returnUrl);
         }
-
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        if (HttpContext.User.IsAuthenticated())
+        {
+            return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
+        }
 
         var viewModel = new RegisterViewModel
         {
             ReturnUrl = returnUrl,
-            IsNativeClient = context?.IsNativeClient() ?? false,
+            IsLocalUrl = response.IsLocalUrl,
         };
         return View(viewModel);
     }
@@ -151,20 +139,12 @@ public partial class AccountController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterViewModel viewModel, CancellationToken cancellationToken)
     {
-        if (viewModel.Password != viewModel.ConfirmPassword)
-        {
-            ModelState.AddModelError("Password", "ConfirmPasswordNotMatch");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return View(viewModel);
-        }
-
-        var confirmationLink = GetHost + Url.RouteUrl(nameof(Api.AccountApiController.ConfirmEmail));
+        var confirmationLink = GetHost + Url.RouteUrl(nameof(ConfirmEmail));
         var confirmationReturnUrl = GetHost + Url.RouteUrl(nameof(EmailConfirmed));
+
         var response = await _mediator.Send(
             new RegisterUserRequest(
                 viewModel.Email!,
@@ -187,6 +167,7 @@ public partial class AccountController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Registered()
     {
         return View();
@@ -200,6 +181,7 @@ public partial class AccountController : Controller
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> SignInExternal(string provider, string? returnUrl, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
@@ -212,14 +194,13 @@ public partial class AccountController : Controller
             {
                 var claims = externalUser.Claims.ToList();
 
-                var response = await _mediator.Send(new SignInExternalUserRequest(claims, provider), cancellationToken);
+                var response = await _mediator.Send(new SignInExternalUserRequest(claims, provider, returnUrl), cancellationToken);
                 if (!response.Succeeded)
                 {
                     throw new Exception("External authentication error");
                 }
 
-                await SignInCookieAsync(response.Claims!, cancellationToken);
-                return Redirect(returnUrl);
+                return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
             }
 
             await HttpContext.SignOutAsync();
@@ -236,4 +217,39 @@ public partial class AccountController : Controller
 
         return Challenge(props, provider);
     }
+
+    private IActionResult GetIncorrectRedirectUrlResult(string? returnUrl)
+    {
+        return View("IncorrectRedirectUrl", new IncorrectRedirectUrlViewModel { ReturnUrl = returnUrl });
+    }
+
+    private IActionResult GetSuccessRedirectResult(string? returnUrl, bool isLocalUrl)
+    {
+        if (isLocalUrl)
+        {
+            returnUrl = string.IsNullOrEmpty(returnUrl) ? "~/" : returnUrl;
+            return Redirect(returnUrl);
+        }
+
+        HttpContext.Response.StatusCode = 200;
+        HttpContext.Response.Headers["Location"] = "";
+        return View("Redirect", new RedirectViewModel { ReturnUrl = returnUrl! });
+    }
+
+    private async Task<SignInViewModel> GetLoginViewModelAsync(string? returnUrl, bool isLocalUrl)
+    {
+        var response = await _mediator.Send(new ReadAuthClientRequest(returnUrl));
+
+        return new SignInViewModel
+        {
+            ReturnUrl = returnUrl,
+            IsLocalUrl = isLocalUrl,
+
+            ClientName = response.Result?.ClientName,
+            LogoUri = response.Result?.LogoUri,
+            EnableLocalLogin = response.Result?.EnableLocalLogin ?? false,
+        };
+    }
+
+    private string GetHost => $"{Request.Scheme}://{Request.Host}";
 }

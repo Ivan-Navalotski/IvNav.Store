@@ -6,6 +6,6 @@ namespace IvNav.Store.Setup.Controllers.Base;
 /// Base versioned api controller
 /// </summary>
 [Route("api/v{version:apiVersion}/[controller]")]
-internal class ApiControllerVersionedBase : ApiControllerBase
+public class ApiControllerVersionedBase : ApiControllerBase
 {
 }

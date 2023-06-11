@@ -19,6 +19,7 @@ namespace IvNav.Store.Identity.Web.ViewModels
         /// <example>1qaz!QAZ</example>
         [Required]
         [MinLength(1)]
+        [Compare("Password")]
         public string? Password { get; init; }
 
         /// <summary>
@@ -31,6 +32,6 @@ namespace IvNav.Store.Identity.Web.ViewModels
 
         public string? ReturnUrl { get; set; }
 
-        public bool IsNativeClient { get; set; }
+        public bool IsLocalUrl { get; set; }
     }
 }

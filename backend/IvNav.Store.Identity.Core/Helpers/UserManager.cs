@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using IvNav.Store.Common.Extensions;
 using IvNav.Store.Identity.Core.Abstractions.Helpers;
-using IvNav.Store.Identity.Core.Extensions.Entities;
+using IvNav.Store.Identity.Core.Enums;
+using IvNav.Store.Identity.Core.Extensions;
 using IvNav.Store.Identity.Core.Models.User;
 using IvNav.Store.Identity.Infrastructure.Abstractions.Contexts;
 using IvNav.Store.Identity.Infrastructure.Entities;
@@ -12,21 +12,6 @@ namespace IvNav.Store.Identity.Core.Helpers;
 
 internal class UserManager : IUserManager
 {
-    private static readonly string EmailErrorKey = "Email";
-    private static readonly string PasswordErrorKey = "Password";
-
-    private static readonly string[] EmailErrors = {
-        "InvalidEmail",
-    };
-    private static readonly string[] PasswordErrors = {
-        "PasswordTooShort",
-        "PasswordRequiresUniqueChars",
-        "PasswordRequiresNonAlphanumeric",
-        "PasswordRequiresNonAlphanumeric",
-        "PasswordRequiresLower",
-        "PasswordRequiresUpper",
-    };
-
     private readonly UserManager<User> _userManager;
     private readonly IAppDbContext _appDbContext;
 
@@ -36,28 +21,46 @@ internal class UserManager : IUserManager
         _appDbContext = appDbContext;
     }
 
-    public async Task<IReadOnlyList<Claim>> GetClaims(Guid userId)
+    public async Task<UserResultModel> CheckUserCredentials(string email, string password,
+        CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        var claims = await _userManager.GetClaimsAsync(user!);
+        var errors = new Dictionary<string, List<string>>();
 
-        return claims.ToList();
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            errors.AddUserError(UserErrors.EmailError.UserNotExists);
+            return new UserResultModel(errors);
+        }
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            errors.AddUserError(UserErrors.EmailError.EmailNotConfirmed);
+            return new UserResultModel(errors);
+        }
+
+        if (!await _userManager.CheckPasswordAsync(user, password))
+        {
+            errors.AddUserError(UserErrors.PasswordError.IncorrectPassword);
+            return new UserResultModel(errors);
+        }
+
+        return new UserResultModel(user);
     }
 
-    public Task<UserManagerReultModel> Create(string email, string password,
+    public Task<UserResultModel> Create(string email, string password,
         CancellationToken cancellationToken,
         Func<Guid, Dictionary<string, List<string>>, Task>? onAfterCreated = null)
     {
         var user = new User
         {
             Email = email,
-            UserName = Guid.NewGuid().ToString(),
+            UserName = email,
         };
 
         return Create(user, password, Array.Empty<Claim>(), cancellationToken, onAfterCreated);
     }
 
-    private async Task<UserManagerReultModel> Create(User user, string password,
+    private async Task<UserResultModel> Create(User user, string password,
         IEnumerable<Claim> claims,
         CancellationToken cancellationToken,
         Func<Guid, Dictionary<string, List<string>>, Task>? onAfterCreated = null)
@@ -66,42 +69,42 @@ internal class UserManager : IUserManager
 
         if (await _userManager.FindByEmailAsync(user.Email!) != null)
         {
-            errors.Upsert(EmailErrorKey, "DuplicateEmail");
-            return new UserManagerReultModel(errors);
+            errors.AddUserError(UserErrors.EmailError.DuplicateEmail);
+            return new UserResultModel(errors);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         var userCreated = await _userManager.CreateAsync(user, password);
 
-        var claimsToAdd = claims
-            .Where(i => i.Type != ClaimTypes.NameIdentifier)
-            .ToList();
-
-        claimsToAdd.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-
-        await _userManager.AddClaimsAsync(user, claimsToAdd);
-
         if (!userCreated.Succeeded)
         {
             foreach (var userCreatedError in userCreated.Errors)
             {
-                if (EmailErrors.Any(i => i == userCreatedError.Code))
+                if (Enum.GetValues<UserErrors.EmailError>().Any(i => i.ToString() == userCreatedError.Code))
                 {
-                    errors.Upsert(EmailErrorKey, userCreatedError.Code);
+                    errors.AddUserError(Enum.Parse<UserErrors.EmailError>(userCreatedError.Code));
                 }
 
-                if (PasswordErrors.Any(i => i == userCreatedError.Code))
+                if (Enum.GetValues<UserErrors.PasswordError>().Any(i => i.ToString() == userCreatedError.Code))
                 {
-                    errors.Upsert(PasswordErrorKey, userCreatedError.Code);
+                    errors.AddUserError(Enum.Parse<UserErrors.PasswordError>(userCreatedError.Code));
                 }
             }
 
-            return new UserManagerReultModel(errors);
+            return new UserResultModel(errors);
         }
 
         try
         {
+            // Claims
+            var claimsToAdd = claims
+                .Where(i => i.Type != ClaimTypes.NameIdentifier)
+                .ToList();
+            claimsToAdd.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            await _userManager.AddClaimsAsync(user, claimsToAdd);
+
+            // AfterCreated invoke
             if (onAfterCreated != null)
             {
                 await onAfterCreated.Invoke(user.Id, errors);
@@ -115,15 +118,15 @@ internal class UserManager : IUserManager
         catch
         {
             await _userManager.DeleteAsync(user);
-            return new UserManagerReultModel(errors);
+            return new UserResultModel(errors);
         }
 
         return !errors.Any()
-            ? new UserManagerReultModel(user.Id)
-            : new UserManagerReultModel(errors);
+            ? new UserResultModel(user)
+            : new UserResultModel(errors);
     }
 
-    public async Task<UserManagerReultModel> CreateExternal(IReadOnlyCollection<Claim> claims, string provider,
+    public async Task<UserResultModel> CreateExternal(IReadOnlyCollection<Claim> claims, string provider,
         CancellationToken cancellationToken)
     {
         var errors = new Dictionary<string, List<string>>();
@@ -133,31 +136,31 @@ internal class UserManager : IUserManager
 
         if (idExternal == null)
         {
-            errors.Upsert("Id", "ValueIsMissing");
+            errors.AddUserError(UserErrors.ExternalIdError.InvalidExternalId);
         }
         if (email == null)
         {
-            errors.Upsert(EmailErrorKey, "ValueIsMissing");
+            errors.AddUserError(UserErrors.EmailError.InvalidEmail);
         }
 
         if (errors.Any())
         {
-            return new UserManagerReultModel(errors);
+            return new UserResultModel(errors);
         }
 
         var link = await _appDbContext.UserExternalProviderLinks
             .Where(i => i.ExternalId == idExternal && i.Provider == provider)
             .FirstOrDefaultAsync(cancellationToken);
 
-        var userId = link?.UserId;
+        User? user = null;
 
         if (link == null)
         {
-            var user = await _userManager.FindByEmailAsync(email!);
+            user = await _userManager.FindByEmailAsync(email!);
             if (user != null)
             {
-                errors.Upsert(EmailErrorKey, "UserAlreadyExists");
-                return new UserManagerReultModel(errors);
+                errors.AddUserError(UserErrors.EmailError.UserAlreadyExists);
+                return new UserResultModel(errors);
             }
 
             var claimTypes = new List<string>
@@ -175,7 +178,7 @@ internal class UserManager : IUserManager
             user = new User
             {
                 Email = email,
-                UserName = Guid.NewGuid().ToString(),
+                UserName = email,
                 EmailConfirmed = true,
                 NeedSetupPassword = true,
             };
@@ -188,8 +191,6 @@ internal class UserManager : IUserManager
             {
                 return userCreated;
             }
-
-            userId = user.Id;
 
             try
             {
@@ -207,39 +208,13 @@ internal class UserManager : IUserManager
             {
                 await _userManager.DeleteAsync(user);
 
-                errors.Upsert(EmailErrorKey, "ErrorCreatingExternalLink");
+                errors.AddUserError(UserErrors.EmailError.ErrorCreatingExternalLink);
 
-                return new UserManagerReultModel(errors);
+                return new UserResultModel(errors);
             }
         }
 
-        return new UserManagerReultModel(userId!.Value);
-    }
-
-    public async Task<UserManagerReultModel> SignIn(string email, string password,
-        CancellationToken cancellationToken)
-    {
-        var errors = new Dictionary<string, List<string>>();
-
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            errors.Upsert(EmailErrorKey, "UserNotExists");
-            return new UserManagerReultModel(errors);
-        }
-        if (!await _userManager.IsEmailConfirmedAsync(user))
-        {
-            errors.Upsert(EmailErrorKey, "EmailNotConfirmed");
-            return new UserManagerReultModel(errors);
-        }
-
-        if (!await _userManager.CheckPasswordAsync(user, password))
-        {
-            errors.Upsert(PasswordErrorKey, "IncorrectPassword");
-            return new UserManagerReultModel(errors);
-        }
-
-        return new UserManagerReultModel(user.Id);
+        return new UserResultModel(user!);
     }
 
     public async Task<string> GenerateEmailConfirmationTokenAsync(Guid userId,
@@ -249,12 +224,11 @@ internal class UserManager : IUserManager
         return await _userManager.GenerateEmailConfirmationTokenAsync(user!);
     }
 
-    public async Task<UserModel?> GetById(Guid userId,
+    public async Task<User?> GetById(Guid userId,
         CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
-
-        return user?.MapToModel();
+        return user;
     }
 
     private static string? GetClaimValue(IEnumerable<Claim> claims, string type)
