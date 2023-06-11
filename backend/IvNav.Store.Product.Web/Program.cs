@@ -23,7 +23,7 @@ builder.Services.AddAutoMapperProfiles(o =>
 
 builder.Services.AddCoreDependencies(builder.Configuration);
 builder.Services.AddAuthentication().AddJwtBearerFromConfig(builder.Configuration);
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationWithPolicies();
 builder.Services.AddDefaultApiVersioning();
 builder.Services.AddControllers();
 builder.Services.AddJsonOptions();

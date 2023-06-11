@@ -20,7 +20,7 @@ public class RequiredHeadersMiddleware
     {
         if (context.Features
                 .Get<IEndpointFeature>()?.Endpoint?.Metadata
-                .FirstOrDefault(m => m is RequiredRequestHeadersAttribute) is RequiredRequestHeadersAttribute attribute)
+                .FirstOrDefault(m => m is RequestHeadersAttribute) is RequestHeadersAttribute attribute)
         {
             CheckHeaders(context.Request.Headers, attribute.Headers);
         }

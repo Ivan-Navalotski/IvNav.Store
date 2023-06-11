@@ -2,6 +2,7 @@ using AutoMapper;
 using IvNav.Store.Product.Core.Commands.Product;
 using IvNav.Store.Product.Core.Queries.Product;
 using IvNav.Store.Product.Web.Models.V1.Product;
+using IvNav.Store.Setup.Attributes;
 using IvNav.Store.Setup.Controllers.Base;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ public class ProductsController : ApiControllerVersionedBaseSecure
     /// </summary>
     /// <returns></returns>
     [HttpPost]
+    [OnlyForUserAuthorize]
     [SwaggerResponse(StatusCodes.Status201Created)]
     public async Task<IActionResult> Create([FromBody] CreateProductRequestDto requestDto, CancellationToken cancellationToken)
     {

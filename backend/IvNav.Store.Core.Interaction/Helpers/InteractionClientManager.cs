@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Dapr.Client;
-using IvNav.Store.Common.Constants;
 using IvNav.Store.Common.Extensions;
 using IvNav.Store.Common.Identity;
 using IvNav.Store.Core.Interaction.Abstractions.Helpers;
@@ -10,6 +9,7 @@ using IvNav.Store.Core.Interaction.Configurations;
 using IvNav.Store.Core.Interaction.Enums;
 using IvNav.Store.Core.Interaction.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace IvNav.Store.Core.Interaction.Helpers
 {
@@ -84,10 +84,9 @@ namespace IvNav.Store.Core.Interaction.Helpers
         {
             var request = _daprClient.CreateInvokeMethodRequest(method, appId.GetAppId(), $"{_options.GetApiPrefix(appId)}/{methodName}", data);
 
-            if (IdentityState.Current != null)
+            if (IdentityState.Current != null && !string.IsNullOrEmpty(IdentityState.Current.BearerToken))
             {
-                request.Headers.Add(HeaderNames.UserId, IdentityState.Current.UserId.ToString());
-                request.Headers.Add(HeaderNames.TenantId, IdentityState.Current.TenantId?.ToString());
+                request.Headers.Add(HeaderNames.Authorization, $"Bearer {IdentityState.Current.BearerToken}");
             }
 
             if (Activity.Current != null)
