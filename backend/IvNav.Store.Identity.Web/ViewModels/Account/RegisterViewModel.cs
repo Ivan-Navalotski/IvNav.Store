@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IvNav.Store.Identity.Web.ViewModels
+namespace IvNav.Store.Identity.Web.ViewModels.Account
 {
     public class RegisterViewModel
     {
@@ -31,7 +31,5 @@ namespace IvNav.Store.Identity.Web.ViewModels
         public string? ConfirmPassword { get; init; }
 
         public string? ReturnUrl { get; set; }
-
-        public bool IsLocalUrl { get; set; }
     }
 }

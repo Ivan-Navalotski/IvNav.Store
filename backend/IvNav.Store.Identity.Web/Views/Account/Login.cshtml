@@ -1,17 +1,11 @@
-@model IvNav.Store.Identity.Web.ViewModels.SignInViewModel
+@model IvNav.Store.Identity.Web.ViewModels.Account.SignInViewModel
+
 <h1>Login</h1>
 
 <form asp-controller="Account" asp-action="Login" method="post">
     <div class="form-group">
-        <div>@Model.ClientName</div>
-        <div>
-            <a asp-area="" asp-controller="Account" asp-action="Register" asp-route-returnUrl="@Model.ReturnUrl" method="get">
-                Register
-            </a>
-        </div>
 
         <input type="hidden" asp-for="ReturnUrl" />
-        <input type="hidden" asp-for="IsLocalUrl" />
 
         <div class="form-group">
             <label asp-for="Email">Email address</label>
@@ -33,11 +27,7 @@
 
         <div class="form-footer mt-2 mb-2">
             <button class="btn btn-primary" value="login">Login</button>
-            @if (!Model.IsLocalUrl && !string.IsNullOrEmpty(Model.ReturnUrl))
-            {
-                <button type="button" class="btn btn-secondary" href="@Model.ReturnUrl">Cancel</button>
-            }
-            </div>
+        </div>
 
         <partial name="_ValidationSummary" />
 

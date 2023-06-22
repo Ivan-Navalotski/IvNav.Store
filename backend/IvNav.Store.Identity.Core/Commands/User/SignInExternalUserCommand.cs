@@ -17,12 +17,6 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
 
     public async Task<SignInExternalUserResponse> Handle(SignInExternalUserRequest request, CancellationToken cancellationToken)
     {
-        var urlResult = await _signInManager.IsValidReturnUrl(request.ReturnUrl, cancellationToken);
-        if (!urlResult.Succeeded)
-        {
-            return new SignInExternalUserResponse(urlResult.Errors);
-        }
-
         var result = await _userManager.CreateExternal(request.Claims, request.Provider, cancellationToken);
 
         if (!result.Succeeded)
@@ -32,6 +26,6 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
 
         await _signInManager.SignIn(result.User!, cancellationToken);
 
-        return new SignInExternalUserResponse(urlResult.IsLocalUrl);
+        return new SignInExternalUserResponse();
     }
 }

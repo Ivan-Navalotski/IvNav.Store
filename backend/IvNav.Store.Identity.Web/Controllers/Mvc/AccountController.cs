@@ -1,6 +1,5 @@
 using Duende.IdentityServer;
 using IvNav.Store.Identity.Core.Commands.User;
-using IvNav.Store.Identity.Web.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
@@ -8,12 +7,15 @@ using Microsoft.AspNetCore.Authorization;
 using IvNav.Store.Identity.Web.Extensions;
 using Duende.IdentityServer.Extensions;
 using IvNav.Store.Identity.Core.Queries.User;
+using IvNav.Store.Identity.Web.ViewModels.Account;
 
-namespace IvNav.Store.Identity.Web.Controllers.Mvc.Account;
+namespace IvNav.Store.Identity.Web.Controllers.Mvc;
 
 [Authorize]
 public class AccountController : Controller
 {
+    private static readonly string HomeUrl = "~/";
+
     private readonly IMediator _mediator;
 
     public AccountController(
@@ -32,23 +34,19 @@ public class AccountController : Controller
     /// Login
     /// </summary>
     /// <param name="returnUrl"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> Login(string? returnUrl)
+    public async Task<IActionResult> Login(string? returnUrl, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new ReadIsValidReturnUrlRequest(returnUrl));
-        if (!response.Succeeded)
+        var viewModel = new SignInViewModel
         {
-            return GetIncorrectRedirectUrlResult(returnUrl);
-        }
-        if (HttpContext.User.IsAuthenticated())
-        {
-            return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
-        }
+            ReturnUrl = returnUrl,
+        };
 
-        var vm = await GetLoginViewModelAsync(returnUrl, response.IsLocalUrl).ConfigureAwait(true);
-        return View(vm);
+        var redirect = await GetRedirectToConsent(returnUrl, cancellationToken);
+        return redirect ?? View(viewModel);
     }
 
     /// <summary>
@@ -69,7 +67,8 @@ public class AccountController : Controller
             return View(viewModel);
         }
 
-        return GetSuccessRedirectResult(viewModel.ReturnUrl, response.IsLocalUrl);
+        var redirect = await GetRedirectToConsent(viewModel.ReturnUrl, cancellationToken);
+        return redirect ?? Redirect(HomeUrl);
     }
 
     /// <summary>
@@ -81,7 +80,7 @@ public class AccountController : Controller
     {
         await _mediator.Send(new SignOutUserRequest(), cancellationToken);
 
-        return GetSuccessRedirectResult(returnUrl, true);
+        return Redirect(returnUrl ?? HomeUrl);
     }
 
     /// <summary>
@@ -114,24 +113,16 @@ public class AccountController : Controller
     /// <returns></returns>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(string? returnUrl)
+    public async Task<IActionResult> Register(string? returnUrl, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new ReadIsValidReturnUrlRequest(returnUrl));
-        if (!response.Succeeded)
-        {
-            return GetIncorrectRedirectUrlResult(returnUrl);
-        }
-        if (HttpContext.User.IsAuthenticated())
-        {
-            return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
-        }
-
         var viewModel = new RegisterViewModel
         {
             ReturnUrl = returnUrl,
-            IsLocalUrl = response.IsLocalUrl,
         };
-        return View(viewModel);
+
+        var redirect = await GetRedirectToConsent(returnUrl, cancellationToken);
+
+        return redirect ?? View(viewModel);
     }
 
     /// <summary>
@@ -184,8 +175,6 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SignInExternal(string provider, string? returnUrl, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(returnUrl)) returnUrl = "~/";
-
         var auth = await HttpContext.AuthenticateAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
         if (auth.Succeeded)
         {
@@ -200,7 +189,8 @@ public class AccountController : Controller
                     throw new Exception("External authentication error");
                 }
 
-                return GetSuccessRedirectResult(returnUrl, response.IsLocalUrl);
+                var redirect = await GetRedirectToConsent(returnUrl, cancellationToken);
+                return redirect ?? Redirect(returnUrl ?? HomeUrl);
             }
 
             await HttpContext.SignOutAsync();
@@ -218,38 +208,61 @@ public class AccountController : Controller
         return Challenge(props, provider);
     }
 
-    private IActionResult GetIncorrectRedirectUrlResult(string? returnUrl)
+    [HttpGet]
+    public async Task<IActionResult> ConsentAuthorization(string? returnUrl, CancellationToken cancellationToken)
     {
-        return View("IncorrectRedirectUrl", new IncorrectRedirectUrlViewModel { ReturnUrl = returnUrl });
-    }
+        var response = await _mediator.Send(new ReadAuthClientRequest(returnUrl), cancellationToken);
 
-    private IActionResult GetSuccessRedirectResult(string? returnUrl, bool isLocalUrl)
-    {
-        if (isLocalUrl)
-        {
-            returnUrl = string.IsNullOrEmpty(returnUrl) ? "~/" : returnUrl;
-            return Redirect(returnUrl);
-        }
-
-        HttpContext.Response.StatusCode = 200;
-        HttpContext.Response.Headers["Location"] = "";
-        return View("Redirect", new RedirectViewModel { ReturnUrl = returnUrl! });
-    }
-
-    private async Task<SignInViewModel> GetLoginViewModelAsync(string? returnUrl, bool isLocalUrl)
-    {
-        var response = await _mediator.Send(new ReadAuthClientRequest(returnUrl));
-
-        return new SignInViewModel
+        var viewModel = new ConsentAuthorizationViewModel
         {
             ReturnUrl = returnUrl,
-            IsLocalUrl = isLocalUrl,
-
-            ClientName = response.Result?.ClientName,
             LogoUri = response.Result?.LogoUri,
-            EnableLocalLogin = response.Result?.EnableLocalLogin ?? false,
+            ClientName = response.Result?.ClientName,
         };
+
+        return View(viewModel);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> ConsentAuthorization(ConsentAuthorizationViewModel viewModel, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new GrantConsentRequest(viewModel.ReturnUrl), cancellationToken);
+
+        if (response.Succeeded)
+        {
+            //return View("Redirect", new RedirectViewModel { ReturnUrl = viewModel.ReturnUrl! });
+            //return View("Redirect", new RedirectViewModel { ReturnUrl = "http://localhost:4200" });
+            //return Redirect(viewModel.ReturnUrl!);
+            return Redirect("http://localhost:4200");
+        }
+
+        return View(viewModel);
+    }
+
+    private async Task<IActionResult?> GetRedirectToConsent(string? returnUrl, CancellationToken cancellationToken)
+    {
+        var isAuthorizationContext = await _mediator.Send(new ReadIsInAuthorizationContextRequest(returnUrl), cancellationToken);
+        if (HttpContext.User.IsAuthenticated() && isAuthorizationContext.Value)
+        {
+            return RedirectToAction("ConsentAuthorization", "Account", new { returnUrl });
+        }
+
+        return null;
+    }
+
+    //private IActionResult GetSuccessRedirectResult(GrantConsentResponse response)
+    //{
+    //    var returnUrl = response.ReturnUrl;
+    //    if (response.IsLocalUrl)
+    //    {
+    //        returnUrl = string.IsNullOrEmpty(returnUrl) ? "~/" : returnUrl;
+    //        return Redirect(returnUrl);
+    //    }
+
+    //    HttpContext.Response.StatusCode = 200;
+    //    HttpContext.Response.Headers["Location"] = "";
+    //    return View("Redirect", new RedirectViewModel { ReturnUrl = returnUrl! });
+    //}
 
     private string GetHost => $"{Request.Scheme}://{Request.Host}";
 }

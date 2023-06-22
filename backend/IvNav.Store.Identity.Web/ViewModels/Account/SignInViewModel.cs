@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IvNav.Store.Identity.Web.ViewModels;
+namespace IvNav.Store.Identity.Web.ViewModels.Account;
 
 public class SignInViewModel
 {
@@ -13,13 +13,4 @@ public class SignInViewModel
     public bool RememberMe { get; set; }
 
     public string? ReturnUrl { get; init; }
-
-    public bool IsLocalUrl { get; init; }
-
-    public string? ClientName { get; init; }
-
-    public bool EnableLocalLogin { get; init; }
-
-    public string? LogoUri { get; init; }
-
 }

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Duende.IdentityServer;
 using Duende.IdentityServer.EntityFramework.DbContexts;
 using Duende.IdentityServer.EntityFramework.Mappers;
 using Duende.IdentityServer.Models;
@@ -80,6 +81,13 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
                         ClaimTypes.NameIdentifier,
                     }
                 },
+                new IdentityResources.OpenId
+                {
+                    UserClaims = new List<string>
+                    {
+                        ClaimTypes.NameIdentifier,
+                    }
+                },
             };
         }
 
@@ -126,7 +134,7 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
         {
             return new List<ApiScope>
             {
-                new ApiScope("WebApi", new List<string> { ClaimTypes.NameIdentifier }),
+                new("WebApi", new List<string> { ClaimTypes.NameIdentifier }),
             };
         }
 
@@ -134,7 +142,7 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
         {
             return new List<Client>
             {
-                new Client
+                new()
                 {
                     ClientId = "WebApiClient",
 
@@ -155,7 +163,43 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
 
                     AlwaysSendClientClaims = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
-                }
+                },
+                new()
+                {
+                    ClientId = "PortalClient",
+
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+                    AllowAccessTokensViaBrowser = true,
+
+                    // secret for authentication
+                    ClientSecrets =
+                    {
+                        new Secret("PortalClientSecret".Sha256())
+                    },
+                    RequireClientSecret = false,
+
+                    // scopes that client has access to
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        "WebApi",
+                    },
+
+                    AlwaysSendClientClaims = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "http://localhost:4200"
+                    },
+                    RedirectUris = new List<string>
+                    {
+                        "http://localhost:4200"
+                    },
+                    RequireConsent = false,
+                    AccessTokenLifetime = 600
+                },
             };
         }
     }

@@ -30,6 +30,7 @@ builder.Services.AddSwagger(builder.Configuration, c =>
 // App
 var app = builder.Build();
 
+app.UseExceptionHandler("/Home/Error");
 app.UseCustomIdentityServer();
 
 app.UseRouting();

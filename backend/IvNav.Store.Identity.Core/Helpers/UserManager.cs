@@ -152,12 +152,12 @@ internal class UserManager : IUserManager
             .Where(i => i.ExternalId == idExternal && i.Provider == provider)
             .FirstOrDefaultAsync(cancellationToken);
 
-        User? user = null;
+        User user;
 
         if (link == null)
         {
-            user = await _userManager.FindByEmailAsync(email!);
-            if (user != null)
+            var userFromManager = await _userManager.FindByEmailAsync(email!);
+            if (userFromManager != null)
             {
                 errors.AddUserError(UserErrors.EmailError.UserAlreadyExists);
                 return new UserResultModel(errors);
@@ -213,8 +213,12 @@ internal class UserManager : IUserManager
                 return new UserResultModel(errors);
             }
         }
+        else
+        {
+            user = (await _userManager.FindByIdAsync(link.UserId.ToString()))!;
+        }
 
-        return new UserResultModel(user!);
+        return new UserResultModel(user);
     }
 
     public async Task<string> GenerateEmailConfirmationTokenAsync(Guid userId,

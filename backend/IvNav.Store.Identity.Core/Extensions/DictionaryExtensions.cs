@@ -19,9 +19,4 @@ internal static class DictionaryExtensions
     {
         dictionary.Upsert("Password", error.ToString());
     }
-
-    public static void AddUserError(this IDictionary<string, List<string>> dictionary, ReturnUrlError error)
-    {
-        dictionary.Upsert("ReturnUrl", error.ToString());
-    }
 }

@@ -7,7 +7,9 @@ internal interface ISignInManager
 {
     Task<ClientInfoModel?> GetClientInfoModel(string? returnUrl, CancellationToken cancellationToken);
 
-    Task<ValidateReturnUrlResultModel> IsValidReturnUrl(string? returnUrl, CancellationToken cancellationToken);
+    Task<bool> IsInAuthorizationContext(string? returnUrl, CancellationToken cancellationToken);
+
+    Task GrantConsent(string? returnUrl, CancellationToken cancellationToken);
 
     Task<UserResultModel> SignIn(User user, CancellationToken cancellationToken);
 

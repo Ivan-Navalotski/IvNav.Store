@@ -27,9 +27,4 @@ internal static class UserErrors
         PasswordRequiresLower,
         PasswordRequiresUpper,
     }
-
-    public enum ReturnUrlError
-    {
-        InvalidReturnUrl,
-    }
 }

@@ -1,7 +1,7 @@
 using Duende.IdentityServer.Events;
+using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using IvNav.Store.Identity.Core.Abstractions.Helpers;
-using IvNav.Store.Identity.Core.Enums;
 using IvNav.Store.Identity.Core.Extensions;
 using IvNav.Store.Identity.Core.Models.User;
 using IvNav.Store.Identity.Infrastructure.Entities;
@@ -34,21 +34,24 @@ internal class SignInManager : ISignInManager
             context.Client.LogoUri);
     }
 
-    public async Task<ValidateReturnUrlResultModel> IsValidReturnUrl(string? returnUrl, CancellationToken cancellationToken)
+    public async Task<bool> IsInAuthorizationContext(string? returnUrl, CancellationToken cancellationToken)
     {
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
 
-        var isLocalUrl = context?.IsLocalUrl() ?? true;
+        return context != null && !context.IsLocalUrl();
+    }
 
-        if (context != null && !_interaction.IsValidReturnUrl(returnUrl))
+    public async Task GrantConsent(string? returnUrl, CancellationToken cancellationToken)
+    {
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+
+        if (context != null)
         {
-            var errors = new Dictionary<string, List<string>>();
-            errors.AddUserError(UserErrors.ReturnUrlError.InvalidReturnUrl);
-
-            return new ValidateReturnUrlResultModel(errors, isLocalUrl);
+            await _interaction.GrantConsentAsync(context, new ConsentResponse()
+            {
+                RememberConsent = true,
+            });
         }
-
-        return new ValidateReturnUrlResultModel(isLocalUrl);
     }
 
     public async Task<UserResultModel> SignIn(User user, CancellationToken cancellationToken)

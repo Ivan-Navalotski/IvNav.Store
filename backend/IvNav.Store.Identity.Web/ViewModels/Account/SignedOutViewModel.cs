@@ -1,4 +1,4 @@
-namespace IvNav.Store.Identity.Web.ViewModels
+namespace IvNav.Store.Identity.Web.ViewModels.Account
 {
     public class SignedOutViewModel
     {
