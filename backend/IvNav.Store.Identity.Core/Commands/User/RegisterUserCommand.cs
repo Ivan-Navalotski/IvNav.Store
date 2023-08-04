@@ -53,7 +53,7 @@ internal class RegisterUserCommand : IRequestHandler<RegisterUserRequest, Regist
             });
 
         return result.Succeeded
-            ? new RegisterUserResponse()
-            : new RegisterUserResponse(result.Errors);
+            ? RegisterUserResponse.Success()
+            : RegisterUserResponse.Error(result.Errors);
     }
 }

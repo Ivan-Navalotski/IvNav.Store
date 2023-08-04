@@ -1,20 +1,37 @@
+using Ardalis.GuardClauses;
+
 namespace IvNav.Store.Identity.Core.Commands.User;
 
 public class SignInExternalUserResponse
 {
-    public bool Succeeded { get; }
+    public bool Succeeded { get; private init; }
 
-    public IReadOnlyDictionary<string, string[]> Errors { get; }
+    public IReadOnlyDictionary<string, string[]> Errors { get; private init; }
 
-    internal SignInExternalUserResponse(IReadOnlyDictionary<string, string[]> errors)
+    public Guid UserId { get; set; }
+
+    private SignInExternalUserResponse()
     {
-        Succeeded = false;
-        Errors = errors.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray());
+        Errors = new Dictionary<string, string[]>();
     }
 
-    internal SignInExternalUserResponse()
+    internal static SignInExternalUserResponse Error(IReadOnlyDictionary<string, string[]> errors)
     {
-        Succeeded = true;
-        Errors = new Dictionary<string, string[]>();
+        Guard.Against.NullOrEmpty(errors);
+
+        return new SignInExternalUserResponse
+        {
+            Succeeded = false,
+            Errors = errors.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray()),
+        };
+    }
+
+    internal static SignInExternalUserResponse Success(Guid userId)
+    {
+        return new SignInExternalUserResponse
+        {
+            Succeeded = true,
+            UserId = userId,
+        };
     }
 }

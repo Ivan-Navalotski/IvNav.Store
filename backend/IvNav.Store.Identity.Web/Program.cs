@@ -38,8 +38,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ActivityMiddleware>("IvNav.Store.Identity.Web");
 app.UseMiddleware<UnhandledExceptionMiddleware>();
+app.UseMiddleware<ActivityMiddleware>("IvNav.Store.Identity.Web");
 app.UseMiddleware<OperationCanceledMiddleware>();
 app.UseMiddleware<IdentityMiddleware>();
 

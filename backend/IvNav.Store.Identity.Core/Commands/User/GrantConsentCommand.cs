@@ -16,10 +16,10 @@ internal class GrantConsentCommand : IRequestHandler<GrantConsentRequest, GrantC
     {
         if (!await _signInManager.IsInAuthorizationContext(request.ReturnUrl, cancellationToken))
         {
-            return new GrantConsentResponse(false);
+            return GrantConsentResponse.Error();
         }
-        await _signInManager.GrantConsent(request.ReturnUrl, cancellationToken);
+        var result = await _signInManager.GrantConsent(request.ReturnUrl, cancellationToken);
 
-        return new GrantConsentResponse(true);
+        return GrantConsentResponse.Success(result!);
     }
 }

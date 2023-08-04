@@ -15,39 +15,39 @@ export class AppComponent {
     this.oauthService.configure(authCodeFlowConfig);
 
     // Automatically load user profile
-    this.oauthService.events
-      .pipe(filter((e) => e.type === 'token_received'))
-      .subscribe((_) => {
-        console.debug('state', this.oauthService.state);
-        this.oauthService.loadUserProfile();
+    // this.oauthService.events
+    //   .pipe(filter((e) => e.type === 'token_received'))
+    //   .subscribe((_) => {
+    //     console.debug('state', this.oauthService.state);
+    //     this.oauthService.loadUserProfile();
 
-        const scopes = this.oauthService.getGrantedScopes();
-        console.debug('scopes', scopes);
-      });
+    //     const scopes = this.oauthService.getGrantedScopes();
+    //     console.debug('scopes', scopes);
+    //   });
 
-    this.oauthService.loadDiscoveryDocument().then((_) => {
-      // if (useHash) {
-      //   this.router.navigate(['/']);
-      // }
+     this.oauthService.loadDiscoveryDocument()//.then((_) => {
+        //if (useHash) {
+        //  this.router.navigate(['/']);
+        //}
 
-      console.log('hasValidAccessToken : ', this.oauthService.hasValidAccessToken());
-      console.log('hasValidIdToken : ', this.oauthService.hasValidIdToken());
-      console.log('getAccessTokenExpiration : ', this.oauthService.getAccessTokenExpiration());
-      console.log('getAccessToken : ', this.oauthService.getAccessToken());
-      console.log('getIdToken : ', this.oauthService.getIdToken());
-    });
+       console.log('hasValidAccessToken : ', this.oauthService.hasValidAccessToken());
+    //   console.log('hasValidIdToken : ', this.oauthService.hasValidIdToken());
+    //   console.log('getAccessTokenExpiration : ', this.oauthService.getAccessTokenExpiration());
+    //   console.log('getAccessToken : ', this.oauthService.getAccessToken());
+    //   console.log('getIdToken : ', this.oauthService.getIdToken());
+    // });
 
-    this.oauthService.initImplicitFlow();
+    //this.oauthService.initImplicitFlow();
 
-    // Optional
-    this.oauthService.setupAutomaticSilentRefresh();
+    // // Optional
+    //this.oauthService.setupAutomaticSilentRefresh();
 
-    this.oauthService.tryLogin();
+    // this.oauthService.tryLogin();
 
-    // Automatically load user profile
-    this.oauthService.events
-      .pipe(filter((e) => e.type === 'token_received'))
-      .subscribe((_) => this.oauthService.loadUserProfile());
+    // // Automatically load user profile
+    // this.oauthService.events
+    //   .pipe(filter((e) => e.type === 'token_received'))
+    //   .subscribe((_) => this.oauthService.loadUserProfile());
   }
 
   get userName(): string {

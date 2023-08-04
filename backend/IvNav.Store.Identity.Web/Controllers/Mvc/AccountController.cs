@@ -67,6 +67,8 @@ public class AccountController : Controller
             return View(viewModel);
         }
 
+        await SingInOnHttpContext(response.UserId);
+
         var redirect = await GetRedirectToConsent(viewModel.ReturnUrl, cancellationToken);
         return redirect ?? Redirect(HomeUrl);
     }
@@ -79,7 +81,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout(string? returnUrl, CancellationToken cancellationToken)
     {
         await _mediator.Send(new SignOutUserRequest(), cancellationToken);
-
+        await SignOutOnHttpContext();
         return Redirect(returnUrl ?? HomeUrl);
     }
 
@@ -188,12 +190,14 @@ public class AccountController : Controller
                 {
                     throw new Exception("External authentication error");
                 }
+                
+                await SingInOnHttpContext(response.UserId);
 
                 var redirect = await GetRedirectToConsent(returnUrl, cancellationToken);
                 return redirect ?? Redirect(returnUrl ?? HomeUrl);
             }
 
-            await HttpContext.SignOutAsync();
+            await SignOutOnHttpContext();
         }
 
         var props = new AuthenticationProperties
@@ -230,13 +234,10 @@ public class AccountController : Controller
 
         if (response.Succeeded)
         {
-            //return View("Redirect", new RedirectViewModel { ReturnUrl = viewModel.ReturnUrl! });
-            //return View("Redirect", new RedirectViewModel { ReturnUrl = "http://localhost:4200" });
-            //return Redirect(viewModel.ReturnUrl!);
-            return Redirect("http://localhost:4200");
+            return Redirect(response.ReturnUrl!);
         }
 
-        return View(viewModel);
+        return RedirectToAction("ConsentAuthorization", "Account", new { viewModel.ReturnUrl });
     }
 
     private async Task<IActionResult?> GetRedirectToConsent(string? returnUrl, CancellationToken cancellationToken)
@@ -250,19 +251,15 @@ public class AccountController : Controller
         return null;
     }
 
-    //private IActionResult GetSuccessRedirectResult(GrantConsentResponse response)
-    //{
-    //    var returnUrl = response.ReturnUrl;
-    //    if (response.IsLocalUrl)
-    //    {
-    //        returnUrl = string.IsNullOrEmpty(returnUrl) ? "~/" : returnUrl;
-    //        return Redirect(returnUrl);
-    //    }
+    private async Task SingInOnHttpContext(Guid userId)
+    {
+        await HttpContext.SignInAsync(new IdentityServerUser(userId.ToString()));
+    }
 
-    //    HttpContext.Response.StatusCode = 200;
-    //    HttpContext.Response.Headers["Location"] = "";
-    //    return View("Redirect", new RedirectViewModel { ReturnUrl = returnUrl! });
-    //}
+    private async Task SignOutOnHttpContext()
+    {
+        await HttpContext.SignOutAsync();
+    }
 
     private string GetHost => $"{Request.Scheme}://{Request.Host}";
 }

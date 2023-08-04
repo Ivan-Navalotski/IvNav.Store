@@ -22,6 +22,6 @@ internal class SignOutUserCommand : IRequestHandler<SignOutUserRequest, SignOutU
 
         await _signInManager.SignOut(user!, cancellationToken);
 
-        return new SignOutUserResponse();
+        return SignOutUserResponse.Success();
     }
 }

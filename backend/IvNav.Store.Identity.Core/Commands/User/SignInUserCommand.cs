@@ -19,11 +19,11 @@ internal class SignInUserCommand : IRequestHandler<SignInUserRequest, SignInUser
         var result = await _userManager.CheckUserCredentials(request.Email, request.Password, cancellationToken);
         if (!result.Succeeded)
         {
-            return new SignInUserResponse(result.Errors);
+            return SignInUserResponse.Error(result.Errors);
         }
 
         await _signInManager.SignIn(result.User!, cancellationToken);
 
-        return new SignInUserResponse();
+        return SignInUserResponse.Success(result.User!.Id);
     }
 }

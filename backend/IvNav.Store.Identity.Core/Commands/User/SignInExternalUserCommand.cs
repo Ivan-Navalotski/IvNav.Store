@@ -21,11 +21,11 @@ internal class SignInExternalUserCommand : IRequestHandler<SignInExternalUserReq
 
         if (!result.Succeeded)
         {
-            return new SignInExternalUserResponse(result.Errors);
+            return SignInExternalUserResponse.Error(result.Errors);
         }
 
         await _signInManager.SignIn(result.User!, cancellationToken);
 
-        return new SignInExternalUserResponse();
+        return SignInExternalUserResponse.Success(result.User!.Id);
     }
 }

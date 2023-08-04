@@ -2,7 +2,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 
 export const authCodeFlowConfig: AuthConfig = {
   issuer: 'https://localhost:7188',
-  redirectUri: window.location.origin + '',
+  redirectUri: window.location.origin + '/login-callback',
   clientId: 'PortalClient',
   responseType: 'code',
   scope: 'WebApi',

@@ -9,7 +9,7 @@ internal interface ISignInManager
 
     Task<bool> IsInAuthorizationContext(string? returnUrl, CancellationToken cancellationToken);
 
-    Task GrantConsent(string? returnUrl, CancellationToken cancellationToken);
+    Task<string?> GrantConsent(string? returnUrl, CancellationToken cancellationToken);
 
     Task<UserResultModel> SignIn(User user, CancellationToken cancellationToken);
 

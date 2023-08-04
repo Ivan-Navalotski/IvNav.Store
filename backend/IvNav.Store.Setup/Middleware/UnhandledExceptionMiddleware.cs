@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using IvNav.Store.Common.Extensions;
-using IvNav.Store.Setup.Exceptions;
 using IvNav.Store.Setup.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -30,15 +29,6 @@ public class UnhandledExceptionMiddleware
         try
         {
             await _next(context);
-        }
-        catch (RequestHeaderException e)
-        {
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await context.Response.WriteAsJsonAsync(new UnhandledExceptionResponseDto
-            {
-                Message = e.Message,
-                TraceId = Activity.Current!.Id!
-            });
         }
         catch (Exception e)
         {

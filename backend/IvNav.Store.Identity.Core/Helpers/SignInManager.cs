@@ -41,17 +41,22 @@ internal class SignInManager : ISignInManager
         return context != null && !context.IsLocalUrl();
     }
 
-    public async Task GrantConsent(string? returnUrl, CancellationToken cancellationToken)
+    public async Task<string?> GrantConsent(string? returnUrl, CancellationToken cancellationToken)
     {
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
 
         if (context != null)
         {
-            await _interaction.GrantConsentAsync(context, new ConsentResponse()
+            await _interaction.GrantConsentAsync(context, new ConsentResponse
             {
                 RememberConsent = true,
+                ScopesValuesConsented = context.ValidatedResources.RawScopeValues,
             });
+
+            return context.RedirectUri;
         }
+
+        return null;
     }
 
     public async Task<UserResultModel> SignIn(User user, CancellationToken cancellationToken)

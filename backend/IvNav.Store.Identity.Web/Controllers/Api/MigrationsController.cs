@@ -195,7 +195,7 @@ namespace IvNav.Store.Identity.Web.Controllers.Api
                     },
                     RedirectUris = new List<string>
                     {
-                        "http://localhost:4200"
+                        "http://localhost:4200/login-callback"
                     },
                     RequireConsent = false,
                     AccessTokenLifetime = 600

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using IvNav.Store.Setup.Attributes;
 using IvNav.Store.Setup.Exceptions;
@@ -18,14 +19,26 @@ public class RequiredHeadersMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (context.Features
-                .Get<IEndpointFeature>()?.Endpoint?.Metadata
-                .FirstOrDefault(m => m is RequestHeadersAttribute) is RequestHeadersAttribute attribute)
+        try
         {
-            CheckHeaders(context.Request.Headers, attribute.Headers);
-        }
+            if (context.Features
+                    .Get<IEndpointFeature>()?.Endpoint?.Metadata
+                    .FirstOrDefault(m => m is RequestHeadersAttribute) is RequestHeadersAttribute attribute)
+            {
+                CheckHeaders(context.Request.Headers, attribute.Headers);
+            }
 
-        await _next(context);
+            await _next(context);
+        }
+        catch (RequestHeaderException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new UnhandledExceptionResponseDto
+            {
+                Message = e.Message,
+                TraceId = Activity.Current!.Id!
+            });
+        }
     }
 
     /// <summary>
@@ -46,7 +59,7 @@ public class RequiredHeadersMiddleware
             {
                 try
                 {
-                    var a = JsonSerializer.Deserialize(JsonSerializer.Serialize(headerValue.ToString()), headerData.Type);
+                    JsonSerializer.Deserialize(JsonSerializer.Serialize(headerValue.ToString()), headerData.Type);
                 }
                 catch (Exception)
                 {

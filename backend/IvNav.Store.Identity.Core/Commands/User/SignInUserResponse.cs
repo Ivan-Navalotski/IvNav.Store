@@ -4,19 +4,34 @@ namespace IvNav.Store.Identity.Core.Commands.User;
 
 public class SignInUserResponse
 {
-    public bool Succeeded { get; }
+    public bool Succeeded { get; private init; }
 
-    public IReadOnlyDictionary<string, string[]> Errors { get; }
+    public IReadOnlyDictionary<string, string[]> Errors { get; private init; }
 
-    internal SignInUserResponse(IReadOnlyDictionary<string, string[]> errors)
+    public Guid UserId { get; set; }
+
+    private SignInUserResponse()
     {
-        Succeeded = false;
-        Errors = Guard.Against.Null(errors);
+        Errors = new Dictionary<string, string[]>();
     }
 
-    internal SignInUserResponse()
+    internal static SignInUserResponse Error(IReadOnlyDictionary<string, string[]> errors)
     {
-        Succeeded = true;
-        Errors = new Dictionary<string, string[]>();
+        Guard.Against.NullOrEmpty(errors);
+
+        return new SignInUserResponse
+        {
+            Succeeded = false,
+            Errors = errors.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value.ToArray()),
+        };
+    }
+
+    internal static SignInUserResponse Success(Guid userId)
+    {
+        return new SignInUserResponse
+        {
+            Succeeded = true,
+            UserId = userId,
+        };
     }
 }

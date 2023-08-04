@@ -1,11 +1,31 @@
+using Ardalis.GuardClauses;
+
 namespace IvNav.Store.Identity.Core.Commands.User;
 
 public class GrantConsentResponse
 {
-    public bool Succeeded { get; }
+    public bool Succeeded { get; private init; }
+    public string? ReturnUrl { get; private init; }
 
-    public GrantConsentResponse(bool succeeded)
+    private GrantConsentResponse()
     {
-        Succeeded = succeeded;
+
+    }
+
+    public static GrantConsentResponse Error()
+    {
+        return new GrantConsentResponse
+        {
+            Succeeded = false,
+        };
+    }
+
+    public static GrantConsentResponse Success(string returnUrl)
+    {
+        return new GrantConsentResponse
+        {
+            Succeeded = true,
+            ReturnUrl = Guard.Against.NullOrEmpty(returnUrl),
+        };
     }
 }
